@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="RSPA AI Path Finder — a 60-second placement quiz that prints your personalized AI curriculum from the RSPA AI Resource Hub.">
+
+<!-- Open Graph / social cards. Once the quiz has its final public URL,
+     update og:url below, and consider swapping og:image for a 1200x630 PNG card. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RSPA AI Resource Hub">
+<meta property="og:title" content="RSPA AI Path Finder">
+<meta property="og:description" content="Six quick questions place you on an AI 101–301 curriculum path for the retail IT channel — printed as a shareable receipt. Free, 60 seconds, no signup.">
+<meta property="og:url" content="https://www.gorspa.org/ai-resource-hub/">
+<meta property="og:image" content="https://www.gorspa.org/wp-content/uploads/logo-color.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RSPA AI Path Finder">
+<meta name="twitter:description" content="Find your AI path: a 60-second placement quiz from the RSPA AI Resource Hub.">
+<title>RSPA AI Path Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&family=Spline+Sans+Mono:wght@400;500;700&display=swap">
+<style>
+  /* ————————————————————————————————————————————————
+     RSPA AI PATH FINDER — a friendly register that
+     prints your curriculum as a receipt.
+     Styled to RSPA's own site: white ground, navy nav
+     blue, action blue links, RSPA red for the stamp.
+     ———————————————————————————————————————————————— */
+  :root{
+    --page:#f1f1f1;         /* RSPA gray band */
+    --card:#ffffff;
+    --border:#d8d8d8;
+    --navy:#1f4a89;         /* RSPA header navy */
+    --navbar:#2860b3;       /* RSPA main-menu blue */
+    --blue:#0066cc;         /* RSPA action/link blue */
+    --blue-dark:#005dac;
+    --red:#c02b0a;          /* RSPA red — stamp only */
+    --txt:#333333;
+    --txt-soft:#6b7280;
+    --paper:#fbf8f1;        /* receipt paper */
+    --paper-2:#f4efe2;
+    --ink:#2d2d2d;
+    --ink-soft:#6f6a5e;
+    --disp:proxima-nova,"Mulish","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --mono:"Spline Sans Mono",ui-monospace,"SF Mono",Menlo,monospace;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--page);
+    color:var(--txt);
+    font-family:var(--disp);
+    font-size:16px;line-height:1.5;
+    min-height:100%;
+    display:flex;justify-content:center;
+    padding:clamp(12px,3vw,32px);
+  }
+  .terminal{
+    width:100%;max-width:640px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 2px 6px rgba(31,74,137,.08);
+  }
+
+  /* ————— masthead ————— */
+  .mast{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:16px 22px 14px;
+    background:var(--card);
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .brand img{height:34px;width:auto;display:block}
+  .brand .wordmark{
+    display:none;
+    font-family:var(--disp);font-weight:800;font-size:23px;letter-spacing:.04em;color:var(--navy);
+  }
+  .brand.no-img img{display:none}
+  .brand.no-img .wordmark{display:block}
+  .brand small{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+    color:var(--txt-soft);text-transform:uppercase;white-space:nowrap;
+    border-left:1px solid var(--border);padding-left:12px;
+  }
+  .mast .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--blue);white-space:nowrap;
+  }
+
+  /* ————— status bar (register display, RSPA nav blue) ————— */
+  .vfd{
+    background:var(--navbar);
+    padding:11px 22px;
+    font-family:var(--mono);
+    color:#fff;
+    display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  }
+  .vfd .msg{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .vfd .count{font-size:12.5px;letter-spacing:.12em;flex:none;color:rgba(255,255,255,.65)}
+  .vfd .count b{color:#fff;font-weight:500}
+
+  /* progress bar */
+  .ticks{height:4px;background:#e6e9ef;overflow:hidden}
+  .ticks i{display:block;height:100%;width:100%;background:var(--blue);
+    transform:scaleX(0);transform-origin:left center;transition:transform .45s var(--ease)}
+
+  /* ————— screens ————— */
+  .stage{padding:28px 22px 30px;position:relative}
+  .screen{display:none}
+  .screen.active{display:block;animation:rise .38s var(--ease)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  h1{
+    font-size:clamp(29px,6vw,42px);font-weight:800;line-height:1.06;color:var(--navy);
+    letter-spacing:-.01em;text-wrap:balance;margin-bottom:14px;
+  }
+  h2{font-size:clamp(21px,4.2vw,26px);font-weight:700;line-height:1.18;color:var(--navy);letter-spacing:-.005em;text-wrap:balance;margin-bottom:20px}
+  .lede{color:var(--txt);font-size:16.5px;max-width:50ch;margin-bottom:26px}
+  .meta-line{font-family:var(--mono);font-size:11.5px;letter-spacing:.02em;color:var(--txt-soft);margin-top:16px}
+  .meta-line b{color:var(--blue);font-weight:500}
+
+  .btn{
+    -webkit-appearance:none;appearance:none;cursor:pointer;
+    font-family:var(--disp);font-weight:700;font-size:16.5px;
+    color:#fff;background:var(--blue);
+    border:none;border-radius:3px;
+    padding:14px 26px;
+    transition:background .15s,transform .12s var(--ease);
+  }
+  .btn:hover{background:var(--blue-dark)}
+  .btn:active{transform:translateY(2px)}
+  .btn:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
+
+  /* answers */
+  .answers{display:flex;flex-direction:column;gap:10px}
+  .ans{
+    -webkit-appearance:none;appearance:none;cursor:pointer;text-align:left;
+    display:flex;align-items:center;gap:14px;
+    width:100%;padding:13px 16px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:4px;
+    color:var(--txt);font-family:var(--disp);font-size:16px;font-weight:400;line-height:1.35;
+    transition:border-color .15s,background .15s,transform .15s var(--ease);
+  }
+  .ans .key{
+    flex:none;width:28px;height:28px;border-radius:3px;
+    display:grid;place-items:center;
+    font-family:var(--mono);font-size:12px;font-weight:700;
+    background:#eaf2fc;color:var(--blue);
+    border:1px solid #c5dcf5;
+  }
+  .ans:hover{border-color:var(--blue);background:#f7fafd;transform:translateX(3px)}
+  .ans:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .ans.rung{border-color:var(--blue);background:#eaf2fc}
+  .q-foot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:18px}
+  .kbd-hint{display:none;font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--txt-soft)}
+  .kbd-hint b{color:var(--blue);font-weight:500}
+  @media (hover:hover) and (pointer:fine){ .kbd-hint{display:inline} }
+  .back{
+    background:none;border:none;cursor:pointer;
+    font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--txt-soft);
+    padding:6px 2px;
+  }
+  .back:hover{color:var(--navy)}
+  .back:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+  /* ————— printing / receipt ————— */
+  .slot{
+    height:12px;border-radius:6px;margin:4px auto 0;max-width:520px;
+    background:linear-gradient(180deg,#c7cdd8,#e9ecf1);
+    border:1px solid var(--border);
+    box-shadow:0 2px 4px rgba(31,74,137,.25) inset;
+  }
+  .receipt-wrap{max-width:480px;margin:0 auto}
+  .receipt{
+    background:
+      repeating-linear-gradient(0deg,transparent 0 26px,rgba(45,45,45,.03) 26px 27px),
+      linear-gradient(180deg,var(--paper),var(--paper-2));
+    color:var(--ink);
+    font-family:var(--mono);font-size:13px;line-height:1.55;
+    padding:26px 24px 20px;
+    margin-top:-6px;
+    box-shadow:0 18px 36px -16px rgba(31,74,137,.45);
+    transform-origin:top center;
+    -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 9px) no-repeat,
+      radial-gradient(circle at 6px -3px, transparent 7px, #000 7.5px) bottom/12px 9px repeat-x;
+            mask:linear-gradient(#000 0 0) top/100% calc(100% - 9px) no-repeat,
+      radial-gradient(circle at 6px -3px, transparent 7px, #000 7.5px) bottom/12px 9px repeat-x;
+  }
+  .printing .receipt{animation:feed 1.1s var(--ease)}
+  @keyframes feed{
+    0%{clip-path:inset(0 0 100% 0);transform:translateY(-14px)}
+    100%{clip-path:inset(0 0 0% 0);transform:none}
+  }
+  .r-center{text-align:center}
+  .r-logo-img{height:34px;width:auto;display:inline-block}
+  .r-logo{display:none;font-family:var(--disp);font-weight:800;font-size:24px;letter-spacing:.02em;color:var(--navy)}
+  .r-head.no-img .r-logo-img{display:none}
+  .r-head.no-img .r-logo{display:block}
+  .r-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+  .rule{border:none;border-top:1.5px dashed rgba(45,45,45,.35);margin:13px 0}
+  .kv{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--ink-soft)}
+  .kv b{color:var(--ink);font-weight:500}
+
+  .stamp-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:4px 0 2px}
+  .lvl{
+    font-family:var(--disp);font-weight:800;font-size:40px;letter-spacing:-.02em;line-height:1;color:var(--navy);
+  }
+  .lvl small{display:block;font-family:var(--mono);font-weight:400;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-top:5px}
+  .stamp{
+    flex:none;transform:rotate(-7deg);
+    border:2.5px solid var(--red);color:var(--red);
+    border-radius:6px;padding:6px 12px;
+    font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+    opacity:.92;
+  }
+  .printing .stamp{animation:stamp .5s var(--ease) .9s backwards}
+  @keyframes stamp{
+    0%{transform:rotate(-7deg) scale(2.1);opacity:0}
+    70%{transform:rotate(-7deg) scale(.94);opacity:.95}
+    100%{transform:rotate(-7deg) scale(1);opacity:.92}
+  }
+  .persona-line{font-size:12.5px;color:var(--ink);margin-top:10px;max-width:42ch}
+
+  .r-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin:2px 0 8px}
+  .item{display:block;text-decoration:none;color:var(--ink);padding:9px 8px;margin:0 -8px;border-radius:4px}
+  .item:hover{background:rgba(0,102,204,.06)}
+  .item:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+  .item .t{display:flex;justify-content:space-between;gap:10px;font-weight:700;font-size:13px}
+  .item .t .sku{flex:none;font-weight:400;color:var(--ink-soft);font-size:11px;letter-spacing:.06em}
+  .item .d{font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.45}
+  .item .u{font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:2px;word-break:break-all;margin-top:3px;display:block}
+  .totals .kv{margin:3px 0}
+  .totals .grand{font-size:15px;color:var(--ink);font-weight:700}
+  .barcode{
+    height:44px;margin:14px auto 4px;max-width:280px;
+    background:repeating-linear-gradient(90deg,
+      var(--ink) 0 2px,transparent 2px 5px,
+      var(--ink) 5px 8px,transparent 8px 10px,
+      var(--ink) 10px 11px,transparent 11px 15px,
+      var(--ink) 15px 19px,transparent 19px 21px);
+  }
+  .thanks{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+
+  /* share row */
+  .share{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+  .chip{
+    -webkit-appearance:none;appearance:none;cursor:pointer;text-decoration:none;
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;
+    color:var(--navy);background:#fff;
+    border:1px solid var(--border);border-radius:3px;
+    padding:9px 16px;transition:border-color .15s,background .15s;
+  }
+  .chip:hover{border-color:var(--blue);background:#f7fafd}
+  .chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .chip.primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:700}
+  .chip.primary:hover{background:var(--blue-dark)}
+  .toast{
+    text-align:center;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;
+    color:var(--blue);margin-top:12px;min-height:16px;opacity:0;transition:opacity .25s;
+  }
+  .toast.show{opacity:1}
+  .shared-note{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--txt-soft);
+    text-align:center;margin-bottom:14px;
+  }
+  .shared-note button{background:none;border:none;color:var(--blue);cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:2px;padding:0}
+
+  .foot{
+    border-top:1px solid var(--border);
+    padding:12px 22px;display:flex;justify-content:space-between;gap:10px;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--txt-soft);text-transform:uppercase;
+  }
+  .foot a{color:var(--blue)}
+  .foot a:hover{color:var(--navy)}
+
+  ::selection{background:var(--blue);color:#fff}
+
+  @media (max-width:480px){
+    .mast{padding:13px 16px 11px}
+    .vfd{padding:10px 16px}
+    .stage{padding:24px 16px 26px}
+    .vfd .msg{font-size:11px;white-space:normal;line-height:1.45}
+    .vfd .count{font-size:11px}
+    .brand small{display:none}
+    .mast .tag{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="terminal" id="terminal">
+  <div class="mast">
+    <div class="brand" id="brand">
+      <img src="https://www.gorspa.org/wp-content/uploads/logo-color.svg" alt="RSPA"
+           onerror="this.parentNode.classList.add('no-img')">
+      <span class="wordmark">R·S·P·A</span>
+      <small>AI Resource Hub</small>
+    </div>
+    <span class="tag">Path Finder</span>
+  </div>
+
+  <div class="vfd" role="status" aria-live="polite">
+    <span class="msg" id="vfdMsg">WELCOME · REGISTER 01 OPEN</span>
+    <span class="count" id="vfdCount"></span>
+  </div>
+  <div class="ticks" id="ticks" aria-hidden="true"></div>
+
+  <div class="stage" id="stage">
+
+    <!-- INTRO -->
+    <section class="screen active" id="intro">
+      <h1>Find your AI path.</h1>
+      <p class="lede">Answer six quick questions about how you work and what you're after. We'll ring you up, place you on an AI 101–301 track, and print a personalized curriculum straight from the RSPA AI Resource Hub.</p>
+      <button class="btn" id="startBtn">Start ringing me up&thinsp;→</button>
+      <p class="meta-line">Takes about <b>60 seconds</b> · no signup · free for the whole channel</p>
+    </section>
+
+    <!-- QUESTION -->
+    <section class="screen" id="quiz">
+      <h2 id="qTitle" tabindex="-1" style="outline:none"></h2>
+      <div class="answers" id="qAnswers"></div>
+      <div class="q-foot">
+        <button class="back" id="backBtn">← back one item</button>
+        <span class="kbd-hint" aria-hidden="true">or press <b>A–D</b></span>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section class="screen" id="result">
+      <p class="shared-note" id="sharedNote" hidden>Viewing a shared result · <button id="retakeInline">take the quiz yourself →</button></p>
+      <div class="slot" aria-hidden="true"></div>
+      <div class="receipt-wrap">
+        <div class="receipt" id="receipt"></div>
+      </div>
+      <div class="share">
+        <button class="chip primary" id="copyBtn">Copy my result link</button>
+        <a class="chip" id="liBtn" target="_blank" rel="noopener">Share on LinkedIn</a>
+        <a class="chip" id="mailBtn">Email it</a>
+        <button class="chip" id="retakeBtn">Retake</button>
+      </div>
+      <p class="toast" id="toast" role="status">LINK COPIED — PASTE IT ANYWHERE</p>
+    </section>
+
+  </div>
+
+  <div class="foot">
+    <span>RSPA · AI Path Finder</span>
+    <a href="https://www.gorspa.org/ai-resource-hub/" target="_blank" rel="noopener">gorspa.org/ai-resource-hub</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ————— config ————— */
+  var HUB = "https://www.gorspa.org/";
+  /* Where LinkedIn / email shares send people. For now this is the AI Resource
+     Hub; once the quiz has its own public URL, point this at the quiz instead. */
+  var SHARE_TARGET = HUB + "ai-resource-hub/";
+  /* Optional response counter: set to an endpoint URL (Formspree, Google Apps
+     Script, etc.) to receive one anonymous POST per completed quiz:
+     {level, track, role, ts}. Leave "" to disable — the widget is zero-backend. */
+  var PING_URL = "";
+
+  /* ————— content: questions ————— */
+  var QUESTIONS = [
+    {
+      kick:"Item 1 · Familiarity",
+      title:"How would you describe you and AI right now?",
+      opts:[
+        {label:"We haven't been formally introduced", pts:0},
+        {label:"I've dabbled — ChatGPT here and there", pts:1},
+        {label:"I use AI tools most days at work", pts:2},
+        {label:"I'm building or deploying AI solutions", pts:3}
+      ]
+    },
+    {
+      kick:"Item 2 · Vocabulary check",
+      title:"Someone says “RAG” in a meeting. You think…",
+      opts:[
+        {label:"…something about cleaning cloths?", pts:0},
+        {label:"I've heard it — retrieval-something", pts:1},
+        {label:"I can explain it in plain English", pts:2},
+        {label:"I've implemented one", pts:3}
+      ]
+    },
+    {
+      kick:"Item 3 · Your seat",
+      title:"Which seat do you sit in most days?",
+      opts:[
+        {label:"Owner / executive", role:"exec"},
+        {label:"Sales or marketing", role:"sales"},
+        {label:"Support, service, or operations", role:"ops"},
+        {label:"Technical — dev, integrations, IT", role:"tech"}
+      ]
+    },
+    {
+      kick:"Item 4 · The goal",
+      title:"What would make this worth your time?",
+      opts:[
+        {label:"Understand what AI actually is (and isn't)", track:"f"},
+        {label:"Get better results from tools I already use", track:"p"},
+        {label:"Run my company more efficiently with AI", track:"i"},
+        {label:"Bring AI to my merchants — or my product", track:"m"}
+      ]
+    },
+    {
+      kick:"Item 5 · Company pulse",
+      title:"How does your company use AI today?",
+      opts:[
+        {label:"It doesn't — or only unofficially", pts:0},
+        {label:"A few people experimenting on their own", pts:1},
+        {label:"Approved tools, some ground rules", pts:2},
+        {label:"AI is built into our products or processes", pts:3}
+      ]
+    },
+    {
+      kick:"Item 6 · The honest one",
+      title:"What's really holding you back?",
+      opts:[
+        {label:"I don't know where to start", mod:-1, flag:"start"},
+        {label:"Security, IP, and accuracy worries", mod:0, flag:"risk"},
+        {label:"Zero spare time to figure it out", mod:0, flag:"time"},
+        {label:"Nothing — hand me the advanced stuff", mod:1, flag:"go"}
+      ]
+    }
+  ];
+
+  /* ————— content: levels & curriculum ————— */
+  var ROLE_LABEL = {exec:"Owner / Executive", sales:"Sales & Marketing", ops:"Support & Operations", tech:"Technical / Dev"};
+  var ROLE_PLAYBOOK = {
+    exec:"Executive playbook — strategy, board materials, faster decisions.",
+    sales:"Sales-team playbook — call prep, follow-ups, pipeline intelligence.",
+    ops:"Support-team playbook — level-1 chatbots, faster resolution, onboarding.",
+    tech:"Developer-team playbook — prototyping, code gen, the new QA."
+  };
+  var TRACK_LABEL = {f:"Foundations", p:"Practitioner", i:"Internal efficiency", m:"Merchant-facing"};
+
+  var LEVELS = {
+    "101":{
+      persona:"The Explorer", grade:"AI 101",
+      line:"AI-curious and starting fresh — the single best place to be. Your curriculum builds the foundation everyone else skipped.",
+      items:[
+        {sku:"TERM-101", t:"AI Terminology & Definitions", d:"Learn the language: generative vs. predictive, LLMs, RAG, agents — decoded for the channel.", u:HUB+"ai-terminology/"},
+        {sku:"MYTH-101", t:"AI Misconceptions & Best Practices", d:"Seven myths, busted — plus what to never paste into a public AI tool.", u:HUB+"ai-misconceptions-best-practices/"},
+        {sku:"PRMPT-101", t:"Basic Prompting — the Cheat Sheet", d:"Sample prompts for marketing, sales & support, and the role-context-format formula.", u:HUB+"ai-tools/"},
+        {sku:"POD-151", t:"Podcast: AI's Impact w/ Byron Reese", d:"A tech futurist's big picture. Zero jargon, all signal.", u:HUB+"blog-rspa-trusted-advisor-ep-151-ais-impact-with-tech-futurist-byron-reese/"},
+        {sku:"ACT-101", t:"This week: one tool, one task", d:"The best-practices action plan — pick one AI tool and use it for one real task before Friday.", u:HUB+"ai-misconceptions-best-practices/"}
+      ]
+    },
+    "102":{
+      persona:"The Practitioner", grade:"AI 102",
+      line:"You already use AI — now make it work harder. Your curriculum turns casual prompting into a repeatable skill.",
+      items:[
+        {sku:"PRMPT-102", t:"Prompting Cheat Sheet & Few-Shot", d:"Context, verification, and teaching the AI with examples before you ask.", u:HUB+"ai-tools/"},
+        {sku:"CRAFT-102", t:"Advanced Prompting: C.R.A.F.T. & Personas", d:"Context-Role-Action-Format-Tone, expert personas, chain-of-thought — the pro moves.", u:HUB+"ai-tools/"},
+        {sku:"SEC-102", t:"Protect Your IP", d:"Zero-trust rules for public tools, and what belongs only in paid, contract-backed platforms.", u:HUB+"ai-misconceptions-best-practices/"},
+        {sku:"DECK-102", t:"Inspire 2026 AI Session Decks", d:"AI Tools Overview and AI Productivity Tools — download the presentations.", u:HUB+"rspa-ai-education-content/"},
+        {sku:"POD-153", t:"Podcast: Zack Kass (ex-OpenAI)", d:"How AI can expand VAR/ISV potential, from OpenAI's former GTM lead.", u:HUB+"blog-rspa-trusted-advisor-ep-153-how-ai-can-expand-var-isv-potential-with-zack-kass/"}
+      ]
+    },
+    "201":{
+      persona:"The Operator", grade:"AI 201",
+      line:"You're past experimenting — time to put AI to work across the whole business, team by team.",
+      items:[
+        {sku:"OPS-201", t:"Internal AI Applications, by Team", d:"__ROLE__", u:HUB+"ai-internal-applications/"},
+        {sku:"PDF-201", t:"Top 10 AI Use Cases for IT Resellers", d:"The internal-productivity playbook, in one PDF.", u:HUB+"wp-content/uploads/Top-10-AI-Use-Cases-for-IT-Resellers-Internal-Productivity-Business-Growth.pdf"},
+        {sku:"PDF-202", t:"Stop Talking About AI and Start Using It", d:"A practical application guide for busy channel executives.", u:HUB+"wp-content/uploads/Stop-Talking-About-AI-and-Start-Using-It-A-Practical-Application-for-Busy-Channel-Executives.pdf"},
+        {sku:"SEC-201", t:"Governance Guardrails", d:"IP protection defaults and sample partner-NDA language before you scale.", u:HUB+"ai-misconceptions-best-practices/"},
+        {sku:"POD-153", t:"Podcast: Zack Kass (ex-OpenAI)", d:"Where VAR/ISV leverage really is — strategy for the next 24 months.", u:HUB+"blog-rspa-trusted-advisor-ep-153-how-ai-can-expand-var-isv-potential-with-zack-kass/"}
+      ]
+    },
+    "301":{
+      persona:"The Trailblazer", grade:"AI 301",
+      line:"You're bringing AI to the front of the store — and the front of the industry. This is the merchant-facing, revenue-side track.",
+      items:[
+        {sku:"MRCH-301", t:"Merchant-Facing AI, by Vertical", d:"What McDonald's, Wegmans, and Sephora are shipping — and what your merchants will ask for next.", u:HUB+"ai-merchant-facing-applications/"},
+        {sku:"POD-159", t:"Podcast: AI & Payments Opportunities", d:"For ISOs, agents, ISVs, and VARs — where AI meets the payments stack.", u:HUB+"blog-rspa-trusted-advisor-ep-159-ai-payments-opportunities-for-isos-agents-isvs-and-vars/"},
+        {sku:"DECK-301", t:"Voice AI & Predictive Analysis Decks", d:"Inspire 2026 sessions: Voice AI in Retail IT and AI Predictive Analysis.", u:HUB+"rspa-ai-education-content/"},
+        {sku:"OPS-301", t:"Cross-System Pipeline Intelligence", d:"Fuse CRM, email, transcripts & support data for forecast-grade deal health.", u:HUB+"ai-internal-applications/"},
+        {sku:"CTA-301", t:"Join the RSPA AI Advisory Group", d:"Shape this hub — contribute case studies and steer what gets built next.", u:"mailto:Membership@GoRSPA.org?subject=RSPA%20AI%20Advisory%20Group"}
+      ]
+    }
+  };
+
+  /* electives appended by track / concern */
+  var ELECTIVES = {
+    m:{sku:"ELEC-M", t:"Elective: Merchant-Facing AI", d:"A preview of the 301 track — real deployments across retail, restaurant & grocery.", u:HUB+"ai-merchant-facing-applications/"},
+    i:{sku:"ELEC-I", t:"Elective: Internal AI Applications", d:"A preview of the 201 track — efficiency use cases organized by business outcome.", u:HUB+"ai-internal-applications/"},
+    risk:{sku:"ELEC-S", t:"Elective: IP & Accuracy Guardrails", d:"The zero-trust defaults that let you use AI without losing sleep.", u:HUB+"ai-misconceptions-best-practices/"}
+  };
+
+  var VFD_LINES = [
+    "SCANNING FAMILIARITY…","CHECKING VOCABULARY…","LOGGING YOUR SEAT…",
+    "PRICING THE GOAL…","READING COMPANY PULSE…","LAST ITEM — BE HONEST…"
+  ];
+
+  /* ————— state ————— */
+  var state = {i:0, answers:[], score:0, role:null, track:null, flag:null, shared:false};
+
+  var $ = function(id){return document.getElementById(id)};
+  var screens = {intro:$("intro"), quiz:$("quiz"), result:$("result")};
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* progress bar */
+  var ticksEl = $("ticks");
+  ticksEl.appendChild(document.createElement("i"));
+
+  function vfd(msg,count){
+    $("vfdMsg").textContent = msg;
+    $("vfdCount").innerHTML = count || "";
+  }
+  function show(name){
+    for(var k in screens){screens[k].classList.remove("active")}
+    screens[name].classList.add("active");
+    postHeight();
+  }
+  function paintTicks(n){
+    ticksEl.firstChild.style.transform = "scaleX(" + (n/QUESTIONS.length) + ")";
+  }
+
+  /* ————— quiz flow ————— */
+  function renderQ(focusTitle){
+    var q = QUESTIONS[state.i];
+    $("qTitle").textContent = q.title;
+    var box = $("qAnswers"); box.innerHTML = "";
+    var KEYS = "ABCD";
+    q.opts.forEach(function(opt,idx){
+      var b = document.createElement("button");
+      b.className = "ans" + (state.answers[state.i]===idx ? " rung" : "");
+      b.type = "button";
+      b.innerHTML = '<span class="key">'+KEYS[idx]+'</span><span>'+opt.label+'</span>';
+      b.addEventListener("click",function(){pick(idx,b)});
+      box.appendChild(b);
+    });
+    $("backBtn").style.visibility = "visible";
+    $("backBtn").textContent = state.i===0 ? "← back to start" : "← back one item";
+    vfd(VFD_LINES[state.i], "ITEM <b>"+(state.i+1)+"</b>/"+QUESTIONS.length);
+    paintTicks(state.i);
+    show("quiz");
+    if(focusTitle !== false){ try{ $("qTitle").focus({preventScroll:false}) }catch(e){} }
+  }
+
+  var advancing = false;
+  function pick(idx, btn){
+    if(advancing) return;
+    advancing = true;
+    var sib = btn.parentNode.children;
+    for(var s=0;s<sib.length;s++){ sib[s].classList.remove("rung") }
+    btn.classList.add("rung");
+    state.answers[state.i] = idx;
+    var delay = reduced ? 0 : 260;
+    setTimeout(function(){
+      advancing = false;
+      state.i++;
+      if(state.i < QUESTIONS.length){ renderQ() }
+      else { tally(); }
+    }, delay);
+  }
+
+  /* register keys: A–D or 1–4 answer the open question */
+  document.addEventListener("keydown", function(e){
+    if(!screens.quiz.classList.contains("active")) return;
+    if(e.altKey || e.ctrlKey || e.metaKey) return;
+    var idx = "ABCD".indexOf(e.key.toUpperCase());
+    if(idx < 0) idx = "1234".indexOf(e.key);
+    if(idx >= 0 && idx < QUESTIONS[state.i].opts.length){
+      var btn = $("qAnswers").children[idx];
+      if(btn){ e.preventDefault(); pick(idx, btn) }
+    }
+  });
+
+  $("backBtn").addEventListener("click",function(){
+    if(state.i===0){ state.answers=[]; vfd("WELCOME · REGISTER 01 OPEN",""); paintTicks(0); show("intro"); return }
+    state.i--; renderQ();
+  });
+
+  $("startBtn").addEventListener("click",function(){ state.i=0; state.answers=[]; renderQ() });
+  $("retakeBtn").addEventListener("click",restart);
+  $("retakeInline").addEventListener("click",restart);
+  function restart(){
+    state = {i:0, answers:[], score:0, role:null, track:null, flag:null, shared:false};
+    $("sharedNote").hidden = true;
+    if(history.replaceState){ try{ history.replaceState(null,"",location.pathname) }catch(e){} }
+    renderQ();
+  }
+
+  /* ————— scoring ————— */
+  function tally(){
+    var score=0, role="ops", track="f", flag=null, mod=0;
+    QUESTIONS.forEach(function(q,qi){
+      var opt = q.opts[state.answers[qi]];
+      if(!opt) return;
+      if(typeof opt.pts === "number") score += opt.pts;
+      if(opt.role) role = opt.role;
+      if(opt.track) track = opt.track;
+      if(typeof opt.mod === "number"){ mod = opt.mod; flag = opt.flag }
+    });
+    var adj = Math.max(0, Math.min(9, score + mod));
+    var level = adj<=2 ? "101" : adj<=5 ? "102" : adj<=7 ? "201" : "301";
+    state.score=adj; state.role=role; state.track=track; state.flag=flag;
+    renderResult(level, track, role, adj, flag, false);
+  }
+
+  /* ————— receipt ————— */
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+  function renderResult(level, track, role, score, flag, isShared){
+    var L = LEVELS[level];
+    var items = L.items.slice();
+
+    /* personalize the 201 lead item by role */
+    items = items.map(function(it){
+      if(it.d === "__ROLE__"){ it = {sku:it.sku,t:it.t,u:it.u,d:ROLE_PLAYBOOK[role] || "Playbooks for every team — pick your seat and start there."} }
+      return it;
+    });
+
+    /* electives: track preview + risk guardrails, deduped */
+    var extra = [];
+    if(track==="m" && level!=="301") extra.push(ELECTIVES.m);
+    if(track==="i" && (level==="101"||level==="102")) extra.push(ELECTIVES.i);
+    if(flag==="risk") extra.push(ELECTIVES.risk);
+    var urls = {}; items.forEach(function(it){urls[it.u+it.t]=1});
+    extra = extra.filter(function(e){ if(urls[e.u+e.t]) return false; urls[e.u+e.t]=1; return true });
+
+    var now = new Date();
+    var dateStr = now.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"2-digit"});
+    var timeStr = now.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+
+    var h = '';
+    h += '<div class="r-center r-head"><img class="r-logo-img" src="https://www.gorspa.org/wp-content/uploads/logo-color.svg" alt="RSPA" onerror="this.parentNode.classList.add(\'no-img\')">';
+    h += '<div class="r-logo">R·S·P·A</div>';
+    h += '<div class="r-sub">AI Resource Hub · Path Finder</div></div>';
+    h += '<hr class="rule">';
+    h += '<div class="kv"><span>DATE</span><b>'+dateStr+' '+timeStr+'</b></div>';
+    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.0</b></div>';
+    h += '<div class="kv"><span>MEMBER SEAT</span><b>'+esc(ROLE_LABEL[role]||"—")+'</b></div>';
+    h += '<div class="kv"><span>TRACK</span><b>'+esc(TRACK_LABEL[track]||"—")+'</b></div>';
+    h += '<hr class="rule">';
+    h += '<div class="stamp-row"><div class="lvl">'+L.grade+'<small>Your placement</small></div>';
+    h += '<div class="stamp">'+esc(L.persona)+'</div></div>';
+    h += '<p class="persona-line">'+esc(L.line)+'</p>';
+    h += '<hr class="rule">';
+    h += '<div class="r-h">Your curriculum — tap any line</div>';
+
+    items.concat(extra).forEach(function(it){
+      var ext = it.u.indexOf("mailto:")===0 ? '' : ' target="_blank" rel="noopener"';
+      h += '<a class="item" href="'+esc(it.u)+'"'+ext+'>';
+      h += '<span class="t"><span>'+esc(it.t)+'</span><span class="sku">'+esc(it.sku)+'</span></span>';
+      h += '<span class="d">'+esc(it.d)+'</span>';
+      h += '<span class="u">'+esc(it.u.replace("https://www.","").replace("mailto:","").split("?")[0])+'</span>';
+      h += '</a>';
+    });
+
+    h += '<hr class="rule">';
+    h += '<div class="totals">';
+    h += '<div class="kv"><span>SUBTOTAL · AI FAMILIARITY</span><b>'+(score===null?"—":score)+' / 9</b></div>';
+    h += '<div class="kv"><span>FEAR OF AI</span><b>−100%</b></div>';
+    h += '<div class="kv grand"><span>TOTAL DUE</span><span>$0.00</span></div>';
+    h += '</div>';
+    h += '<hr class="rule">';
+    h += '<div class="r-center"><div class="barcode" aria-hidden="true"></div>';
+    h += '<div class="kv" style="justify-content:center;gap:6px"><span>'+level+'-'+track.toUpperCase()+(role?'-'+role.toUpperCase().slice(0,4):'')+'</span></div>';
+    h += '<p class="thanks" style="margin-top:10px">*** Thank you for learning with RSPA ***<br>No refunds on knowledge</p></div>';
+
+    $("receipt").innerHTML = h;
+
+    /* share links */
+    var code = level + track;
+    var base = location.origin + location.pathname;
+    var shareUrl = base + "?r=" + code;
+    var liText = isShared
+      ? "Worth 60 seconds for anyone in the retail IT channel: the RSPA AI Path Finder places you on a personalized AI curriculum. This one came back "+L.grade+" — "+L.persona+". Find your path on the RSPA AI Resource Hub: "+SHARE_TARGET
+      : "I just took the RSPA AI Path Finder and placed at "+L.grade+" — "+L.persona+". Six quick questions, then a personalized AI curriculum for VARs and ISVs. Find your own path on the RSPA AI Resource Hub: "+SHARE_TARGET;
+    $("liBtn").href = "https://www.linkedin.com/feed/?shareActive=true&text=" + encodeURIComponent(liText);
+    $("copyBtn").textContent = isShared ? "Copy this result link" : "Copy my result link";
+    $("retakeBtn").textContent = isShared ? "Take the quiz" : "Retake";
+    var mailSubj = isShared ? "Find your AI path — RSPA AI Path Finder"
+                            : "My RSPA AI path: "+L.grade+" — "+L.persona;
+    var mailBody = isShared
+      ? "Hi,\n\nThought of you for this: the RSPA AI Path Finder — six quick questions that place you on a personalized AI curriculum for the retail IT channel. This result came back "+L.grade+" ("+L.persona+").\n\nFind your own AI path (about 60 seconds, no signup):\n"+SHARE_TARGET+"\n\n"
+      : "Hi,\n\nI just took the RSPA AI Path Finder and placed at "+L.grade+" — "+L.persona+".\n\nIt asks six quick questions, then prints a personalized AI curriculum — terminology, prompting, and real use cases for VARs and ISVs — straight from the RSPA AI Resource Hub.\n\nFind your own AI path (about 60 seconds, no signup):\n"+SHARE_TARGET+"\n\n";
+    $("mailBtn").href = "mailto:?subject=" + encodeURIComponent(mailSubj) + "&body=" + encodeURIComponent(mailBody);
+
+    /* optional anonymous response counter */
+    if(PING_URL && !isShared){
+      try{
+        fetch(PING_URL,{method:"POST",mode:"no-cors",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({level:level,track:track,role:role,ts:Date.now()})
+        }).catch(function(){});
+      }catch(e){}
+    }
+    $("copyBtn").onclick = function(){
+      var toastMsg = function(msg){ var t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(function(){t.classList.remove("show")},4000) };
+      var done = function(){ toastMsg("LINK COPIED — PASTE IT ANYWHERE") };
+      var fail = function(){ toastMsg("COPY BLOCKED — LINK: "+shareUrl) };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(shareUrl).then(done,function(){fallbackCopy(shareUrl,done,fail)});
+      } else { fallbackCopy(shareUrl,done,fail) }
+    };
+
+    $("sharedNote").hidden = !isShared;
+    vfd("PLACEMENT PRINTED · "+L.grade+" · "+L.persona.toUpperCase(), "");
+    paintTicks(QUESTIONS.length);
+    var wrap = $("result");
+    wrap.classList.remove("printing");
+    void wrap.offsetWidth; /* restart animation */
+    if(!reduced) wrap.classList.add("printing");
+    show("result");
+    setTimeout(postHeight, reduced?50:1200);
+  }
+
+  function fallbackCopy(text,done,fail){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.setAttribute("readonly","");
+    ta.style.position="absolute"; ta.style.left="-9999px";
+    document.body.appendChild(ta); ta.select();
+    var ok=false;
+    try{ ok=document.execCommand("copy") }catch(e){ ok=false }
+    document.body.removeChild(ta);
+    if(ok){ done() } else if(fail){ fail() }
+  }
+
+  /* ————— shared-result deep link (?r=201i) ————— */
+  (function(){
+    var m = /[?&]r=(101|102|201|301)([fpim])?/.exec(location.search);
+    if(m){
+      var lvl=m[1], trk=m[2]||"f";
+      state.shared = true;
+      renderResult(lvl, trk, null, null, null, true);
+    }
+  })();
+
+  /* ————— iframe auto-height ————— */
+  function postHeight(){
+    if(window.parent === window) return;
+    try{
+      window.parent.postMessage({type:"rspa-pathfinder-height",
+        height: document.documentElement.scrollHeight}, "*");
+    }catch(e){}
+  }
+  window.addEventListener("resize", postHeight);
+  if(window.ResizeObserver){ new ResizeObserver(postHeight).observe(document.body) }
+  postHeight();
+})();
+</script>
+
+</body>
+</html>
