@@ -6,7 +6,7 @@
 
 **Six quick questions. One personalized AI curriculum — printed as a receipt.**
 
-A free tool for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hub/), built for VARs, ISVs, vendors, and distributors in the retail, restaurant, and grocery verticals.
+A free tool for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hub/), built for VARs, ISVs, vendors, and distributors.
 
 [![Take the quiz](https://img.shields.io/badge/▶_Take_the_quiz-live_demo-2860B3?style=for-the-badge)](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)
 
