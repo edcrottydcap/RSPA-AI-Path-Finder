@@ -2,7 +2,9 @@
 
 An interactive placement quiz for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hub/). Six quick questions place a visitor on an **AI 101 / 102 / 201 / 301** track with a persona (The Explorer, The Practitioner, The Operator, The Trailblazer) — then their personalized curriculum prints as a point-of-sale **receipt**, itemized with live links to RSPA content. Built for North America's retail IT channel: VARs, ISVs, vendors, and distributors in the retail, restaurant, and grocery verticals.
 
-**[▶ Live preview](https://claude.ai/code/artifact/5fded164-407c-409f-abd7-189eb3e8c3a5)** · [Placement logic](docs/placement-logic.md) · [How it was built](docs/how-it-was-built.md) · [WordPress embed guide](docs/wordpress-embed.md) · [Customization](docs/customization.md) · [Content maintenance](docs/content-maintenance.md) · [Full flow spec](docs/flow-spec.md)
+**[▶ Live demo](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)** · [Placement logic](docs/placement-logic.md) · [How it was built](docs/how-it-was-built.md) · [WordPress embed guide](docs/wordpress-embed.md) · [Customization](docs/customization.md) · [Content maintenance](docs/content-maintenance.md) · [Full flow spec](docs/flow-spec.md)
+
+> The live demo is served by GitHub Pages from this repo (Settings → Pages → deploy from `main`, root). Until Pages is enabled, download [`index.html`](index.html) and open it in any browser. A [Claude artifact preview](https://claude.ai/code/artifact/5fded164-407c-409f-abd7-189eb3e8c3a5) also exists for Datacap-internal review.
 
 ## What it does
 
