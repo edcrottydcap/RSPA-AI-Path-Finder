@@ -1,0 +1,142 @@
+/* RSPA AI Path Finder — host-page styles. The quiz itself is styled inside its
+ * iframe, so the theme can't affect it. Selectors are prefixed with .rspa-apf
+ * so theme rules like ".entry-content a" don't recolor the button. */
+
+/* gorspa.org values: header navy, .btn-link.blue, .first-section-header, .hub-title, link blue */
+.rspa-apf {
+	--rspa-apf-navy: #1f4a89;
+	--rspa-apf-btn: #275ca7;
+	--rspa-apf-header: #1e73be;
+	--rspa-apf-title: #005dac;
+	--rspa-apf-blue: #0066cc;
+}
+
+/* inline quiz */
+.rspa-apf--embed iframe {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	border: 0;
+	transition: height .25s ease;
+}
+
+/* button — matches gorspa.org's ".btn-link.blue": flat, square, uppercase, bold */
+.rspa-apf--button { margin: 1em 0; }
+.rspa-apf .rspa-apf-button,
+.rspa-apf .rspa-apf-button:visited {
+	display: inline-block;
+	padding: .8em 1.4em;
+	border: 2px solid var(--rspa-apf-btn);
+	border-radius: 0;
+	background: var(--rspa-apf-btn);
+	color: #fff;
+	font-family: inherit;
+	font-weight: 700;
+	font-size: 15px;
+	letter-spacing: .02em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	text-decoration: none;
+	box-shadow: none;
+	transition: background .15s, border-color .15s;
+}
+.rspa-apf .rspa-apf-button:hover,
+.rspa-apf .rspa-apf-button:focus {
+	background: var(--rspa-apf-navy);
+	border-color: var(--rspa-apf-navy);
+	color: #fff;
+	text-decoration: none;
+}
+.rspa-apf .rspa-apf-button:focus-visible { outline: 3px solid var(--rspa-apf-blue); outline-offset: 3px; }
+
+/* promo card — built from the AI hub's own parts: the blue section-header bar
+   (.first-section-header) over the gray description panel (.ai-desc). */
+.rspa-apf--card {
+	max-width: 900px;
+	margin: 2em auto;
+	font-family: inherit;
+	text-align: left;
+}
+.rspa-apf--card p { margin: 0; }
+.rspa-apf .rspa-apf-card__eyebrow {
+	background: var(--rspa-apf-header);
+	color: #fff;
+	padding: .55em 1em;
+	font-weight: 700;
+	font-size: 15px;
+	letter-spacing: .02em;
+}
+.rspa-apf-card__body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px 28px;
+	padding: 1.4em 1.5em;
+	background: #eeeeee;
+}
+.rspa-apf-card__text { flex: 1 1 320px; min-width: 0; }
+.rspa-apf .rspa-apf-card__heading { font-size: 1.3em; font-weight: 700; line-height: 1.25; color: var(--rspa-apf-title); }
+.rspa-apf .rspa-apf-card__blurb { margin-top: .35em; font-size: 1em; line-height: 1.5; color: #333; }
+.rspa-apf--card .rspa-apf-button { flex: none; }
+
+/* floating launcher */
+.rspa-apf-launcher { position: fixed; bottom: 20px; z-index: 99990; }
+.rspa-apf-launcher--right { right: 20px; }
+.rspa-apf-launcher--left { left: 20px; }
+.rspa-apf-launcher .rspa-apf-button { padding: .85em 1.3em; box-shadow: 0 4px 14px rgba(0, 32, 53, .35); }
+.rspa-apf-modal-open .rspa-apf-launcher { display: none; }
+
+/* popup */
+.rspa-apf-modal { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: flex-start; justify-content: center; padding: 4vh 12px; }
+.rspa-apf-modal[hidden] { display: none; }
+.rspa-apf-modal__backdrop { position: absolute; inset: 0; background: rgba(15, 30, 55, .62); }
+.rspa-apf-modal__panel {
+	position: relative;
+	width: 100%;
+	max-width: 680px;
+	max-height: 92vh;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	background: #f1f1f1;
+	border-radius: 0;
+	padding: 14px 10px 10px;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+}
+.rspa-apf-modal__close {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	z-index: 1;
+	width: 36px;
+	height: 36px;
+	border: 0;
+	border-radius: 50%;
+	background: #fff;
+	color: #1f4a89;
+	font-size: 24px;
+	line-height: 36px;
+	cursor: pointer;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, .2);
+}
+.rspa-apf-modal__close:focus-visible { outline: 3px solid #0066cc; outline-offset: 2px; }
+html.rspa-apf-modal-open, html.rspa-apf-modal-open body { overflow: hidden; }
+
+/* phones — the media query, plus .rspa-apf-small set by embed.js from the
+   visible width (covers themes whose layout overflows the screen) */
+@media (max-width: 480px) {
+	.rspa-apf-card__body { padding: 1.1em; }
+	.rspa-apf--card .rspa-apf-button { width: 100%; text-align: center; }
+	.rspa-apf-launcher { bottom: 12px; }
+	.rspa-apf-launcher--right { right: 12px; }
+	.rspa-apf-launcher--left { left: 12px; }
+	.rspa-apf-modal { padding: 0; }
+	.rspa-apf-modal__panel { max-height: none; height: 100%; padding-top: 48px; }
+}
+.rspa-apf-small .rspa-apf-card__body { padding: 1.1em; }
+.rspa-apf-small .rspa-apf--card .rspa-apf-button { width: 100%; text-align: center; }
+.rspa-apf-small .rspa-apf-modal { padding: 0; }
+.rspa-apf-small .rspa-apf-modal__panel { max-height: none; height: 100%; padding-top: 48px; }
+@media (prefers-reduced-motion: reduce) {
+	.rspa-apf--embed iframe { transition: none; }
+}

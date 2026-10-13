@@ -10,6 +10,8 @@ A free tool for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hu
 
 [![Take the quiz](https://img.shields.io/badge/▶_Take_the_quiz-live_demo-2860B3?style=for-the-badge)](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)
 
+[![Download the WordPress plugin](https://img.shields.io/badge/⬇_WordPress_plugin-download_.zip-1F4A89?style=for-the-badge)](https://github.com/edcrottydcap/RSPA-AI-Path-Finder/releases/latest/download/rspa-ai-path-finder.zip)
+
 ![60 seconds](https://img.shields.io/badge/time-~60_seconds-0066CC) ![No signup](https://img.shields.io/badge/signup-none-1F4A89) ![No tracking](https://img.shields.io/badge/tracking-none-1F4A89) ![Dependencies](https://img.shields.io/badge/dependencies-zero-6b7280)
 
 <br>
@@ -22,6 +24,29 @@ A free tool for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hu
 </table>
 
 </div>
+
+## Put it on your WordPress site (RSPA: start here)
+
+The quiz ships as a WordPress plugin. It installs in about ten minutes with no coding, and opens in a **popup** from a button, so it never has to fit into an existing page layout.
+
+1. **Download** → [`rspa-ai-path-finder.zip`](https://github.com/edcrottydcap/RSPA-AI-Path-Finder/releases/latest/download/rspa-ai-path-finder.zip). That link always serves the latest release. Don't unzip it.
+2. **Install** → WordPress dashboard → **Plugins → Add Plugin → Upload Plugin** → choose the zip → **Install Now** → **Activate**.
+3. **Place it.** Pick one:
+   - **Easiest, no page editing:** **Settings → AI Path Finder** → tick **Show the floating button** → **Save**. A "Find your AI path" button appears on all seven AI Resource Hub pages (pre-filled).
+   - **A card on the hub home page:** paste `[pathfinder display="card"]` into the page, or add the **AI Path Finder** block.
+   - **Its own page:** it's already live at `yoursite.org/ai-path-finder/`. Link to it from menus, emails, or QR codes.
+4. **Check it** on a computer and a phone.
+
+<table>
+<tr>
+<td align="center" width="62%"><img src="docs/images/mock-hub-card.jpg" alt="Mockup: the AI Resource Hub home page with the Path Finder card"><br><sub>Mockup: the card on the AI Resource Hub home page, styled to match the hub</sub></td>
+<td align="center" width="38%"><img src="docs/images/mobile-popup-question.jpg" alt="The quiz in a full-screen popup on a phone" width="220"><br><sub>On phones the popup goes full screen</sub></td>
+</tr>
+</table>
+
+**→ Full guide with screenshots, every option, settings, and troubleshooting: [docs/wordpress-plugin.md](docs/wordpress-plugin.md)**
+
+Not on WordPress, or can't install plugins? The quiz is one standalone HTML file; see [docs/wordpress-embed.md](docs/wordpress-embed.md) for a ten-line iframe embed.
 
 ## What is this?
 
@@ -56,7 +81,9 @@ The complete decision flow — every question, option, point value, and elective
 
 ## Try it
 
-**[▶ Take the quiz](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)** — live from this repo via GitHub Pages. Or download [`index.html`](index.html) (the entire tool is that one file) and open it in any browser.
+**[▶ Take the quiz](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)**: live from this repo via GitHub Pages, and updated automatically whenever `main` changes. Or download [`index.html`](index.html) (the entire tool is that one file) and open it in any browser.
+
+The curriculum was last refreshed against the live hub on **October 13, 2026** (RetailNOW 2026 and Inspire 2026 material). See [CHANGELOG.md](CHANGELOG.md).
 
 Got a placement you disagree with, a resource that belongs on a receipt, or an idea for a new track? [Open an issue](../../issues) — or email the RSPA at **Membership@GoRSPA.org** to get involved with the AI Resource Hub itself.
 
@@ -66,12 +93,21 @@ Got a placement you disagree with, a resource that belongs on a receipt, or an i
 |---|---|
 | [Placement logic](docs/placement-logic.md) | The full decision flow as Mermaid diagrams, and why it's built that way |
 | [How it was built](docs/how-it-was-built.md) | Architecture, RSPA-brand design decisions, accessibility, QA |
-| [WordPress embed guide](docs/wordpress-embed.md) | Three ways to put it on gorspa.org (a ten-line iframe does it) |
+| [**WordPress plugin**](docs/wordpress-plugin.md) | Download, install, floating button, card, block, shortcodes, settings, troubleshooting, releasing |
+| [WordPress embed without the plugin](docs/wordpress-embed.md) | Iframe snippet and standalone hosting, for sites that can't install plugins |
 | [Customization](docs/customization.md) | Editing questions, curriculum links, share targets, optional response counter |
-| [Content maintenance](docs/content-maintenance.md) | `scripts/audit-content.mjs` link audit + an AI maintainer prompt |
+| [Content maintenance](docs/content-maintenance.md) | `scripts/audit-content.mjs` link audit, the monthly update routine, and an AI maintainer prompt |
 | [Full flow spec](docs/flow-spec.md) | Every question, score threshold, and curriculum URL |
 
-The widget is a single self-contained HTML file: no framework, no build step, no backend, no cookies. It's styled to the RSPA site's own palette and typography, honors reduced-motion and keyboard-only use, and auto-resizes when embedded in an iframe. All curriculum links point to RSPA-published content on gorspa.org; a [Claude artifact preview](https://claude.ai/code/artifact/5fded164-407c-409f-abd7-189eb3e8c3a5) also exists for Datacap-internal review.
+The widget is a single self-contained HTML file: no framework, no build step, no backend, no cookies. It's styled to the RSPA site's own palette and typography, honors reduced-motion and keyboard-only use, and auto-resizes when embedded in an iframe. All curriculum links point to RSPA-published content (on gorspa.org, plus two Inspire 2026 decks the hub hosts on Google Drive).
+
+| Folder | What's there |
+|---|---|
+| `index.html` | The quiz: the single source of truth |
+| `wordpress-plugin/rspa-ai-path-finder/` | The WordPress plugin (its `app/path-finder.html` is generated from `index.html`) |
+| `scripts/audit-content.mjs` | Checks every curriculum link and reports new hub content |
+| `scripts/build-plugin.mjs` | Copies the quiz into the plugin and builds the zip |
+| `docs/` | Everything in the table above |
 
 ---
 

@@ -44,7 +44,10 @@ flowchart TD
 
     TI -- "at 101/102" --> EI["Elective: Internal AI preview"]
     TM -- "below 301" --> EM["Elective: Merchant-facing preview"]
+    TM -- "at 301" --> EV["Elective: Voice AI deck"]
     RISK["Q6 = security worries"] --> ES["Elective: IP & accuracy guardrails"]
+    RT --> ET["Elective: AI-assisted development"]
+    RE --> EX["Elective: AI considerations for VAR leaders"]
 
     RE & RS & RO & RT --> R201["201's lead item description becomes<br/>that seat's team playbook"]
     TF & TP & TI & TM --> CODE["Deep-link code: level + track<br/>e.g. ?r=201i"]
@@ -57,9 +60,9 @@ Each level maps to five fixed items (see [flow-spec.md](flow-spec.md) for every 
 | Level | Persona | Curriculum spine |
 |---|---|---|
 | **AI 101** | The Explorer | Terminology → Misconceptions → Basic prompting → Podcast ep. 151 → "one tool, one task" action |
-| **AI 102** | The Practitioner | Cheat sheet & few-shot → C.R.A.F.T. & personas → Protect your IP → Inspire decks → Podcast ep. 153 |
-| **AI 201** | The Operator | Internal AI by team (role-personalized) → Top 10 Use Cases PDF → Exec application PDF → Governance guardrails → Podcast ep. 153 |
-| **AI 301** | The Trailblazer | Merchant-facing AI by vertical → Podcast ep. 159 (AI & payments) → Voice AI / Predictive decks → Pipeline intelligence → Join the AI Advisory Group |
+| **AI 102** | The Practitioner | Cheat sheet & few-shot → C.R.A.F.T. & personas → Protect your IP → 7-Day social content prompt → Podcast ep. 153 |
+| **AI 201** | The Operator | Internal AI by team (role-personalized) → Top 10 Use Cases PDF → Exec application PDF → Governance guardrails → What VAR & ISV teams should learn next (RetailNOW 2026) |
+| **AI 301** | The Trailblazer | Merchant-facing AI by vertical → Podcast ep. 159 (AI & payments) → Conversational AI case studies → Merchant AI by vertical PDF → Join the AI Advisory Group |
 
 Electives are appended after the spine and deduped against it, so a receipt never lists the same resource twice.
 

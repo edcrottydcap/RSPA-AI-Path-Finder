@@ -1,0 +1,40 @@
+# Checks the WordPress plugin on every push/PR, and publishes the plugin zip as a
+# GitHub Release when a version tag (v1.2.0, …) is pushed. The README's download
+# link (releases/latest/download/rspa-ai-path-finder.zip) serves that release.
+name: Plugin
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Plugin copy matches index.html
+        run: node scripts/build-plugin.mjs --check
+      - name: PHP syntax
+        run: find wordpress-plugin -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Build zip
+        run: node scripts/build-plugin.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rspa-ai-path-finder
+          path: dist/rspa-ai-path-finder.zip
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/rspa-ai-path-finder.zip \
+            --title "AI Path Finder $GITHUB_REF_NAME" \
+            --notes "Download **rspa-ai-path-finder.zip** below and upload it at WordPress → Plugins → Add Plugin → Upload Plugin. See [docs/wordpress-plugin.md](https://github.com/${{ github.repository }}/blob/main/docs/wordpress-plugin.md) and [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)."

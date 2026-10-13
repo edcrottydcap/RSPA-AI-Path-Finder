@@ -1,0 +1,9 @@
+{
+	"core": null,
+	"phpVersion": "8.2",
+	"plugins": [ "./wordpress-plugin/rspa-ai-path-finder" ],
+	"config": { "WP_DEBUG": true, "WP_DEBUG_DISPLAY": true },
+	"lifecycleScripts": {
+		"afterStart": "npx wp-env run cli wp rewrite structure '/%postname%/' --hard"
+	}
+}

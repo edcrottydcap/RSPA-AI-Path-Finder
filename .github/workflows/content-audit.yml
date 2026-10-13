@@ -1,0 +1,43 @@
+# Monthly check of the quiz's curriculum against the live RSPA AI Resource Hub.
+# Opens an issue when a link breaks or new hub content appears.
+name: Content audit
+
+on:
+  schedule:
+    - cron: "0 12 1 * *" # 12:00 UTC on the first of each month
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: audit
+        name: Run the audit
+        run: |
+          set +e
+          node scripts/audit-content.mjs > audit-report.md
+          code=$?
+          cat audit-report.md
+          fresh=$(grep -oE 'New hub content candidates: [0-9]+' audit-report.md | grep -oE '[0-9]+$')
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          echo "fresh=${fresh:-0}" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: audit-report.md
+      - name: Open an issue if anything needs attention
+        if: steps.audit.outputs.exit != '0' || steps.audit.outputs.fresh != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Content audit $(date -u +%Y-%m): broken links or new hub content" \
+            --body-file audit-report.md

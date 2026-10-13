@@ -5,10 +5,14 @@ Everything editable lives in plain JavaScript objects and CSS variables inside `
 ## The config constants (top of the `<script>` block)
 
 ```js
+var CFG = window.RSPA_PATHFINDER_CONFIG || {};               // set by the WordPress plugin
 var HUB = "https://www.gorspa.org/";
-var SHARE_TARGET = HUB + "ai-resource-hub/"; // where LinkedIn/email shares send people
-var PING_URL = "";                            // optional response counter endpoint
+var SHARE_TARGET = CFG.shareTarget || HUB + "ai-resource-hub/"; // where LinkedIn/email shares send people
+var PING_URL = CFG.pingUrl || "";                               // optional response counter endpoint
+var RESULT_BASE = CFG.resultBase || (location.origin + location.pathname); // base of "Copy my result link"
 ```
+
+**On WordPress, don't edit these.** Set them in **Settings → AI Path Finder** and the plugin injects `window.RSPA_PATHFINDER_CONFIG` ([wordpress-plugin.md](wordpress-plugin.md)). The defaults apply to the standalone file and GitHub Pages.
 
 - **`SHARE_TARGET`** — currently the AI Resource Hub. Once the quiz has its own public URL, point this at the quiz so shares drive people straight into taking it.
 - **`PING_URL`** — the widget is zero-backend by default. To count completions, set this to any endpoint that accepts a POST; each completed quiz (never shared-link views) sends one anonymous JSON body: `{level, track, role, ts}`. Two free options:
@@ -28,7 +32,7 @@ Six entries; each option contributes one thing:
 
 Scoring: points from Q1+Q2+Q5 (0–9) plus the Q6 modifier, clamped to 0–9. Thresholds: 0–2 → 101, 3–5 → 102, 6–7 → 201, 8–9 → 301. If you add or remove point-carrying questions, adjust the thresholds and the "/ 9" subtotal copy to match the new maximum.
 
-## Curriculum — `LEVELS` and `ELECTIVES`
+## Curriculum: `LEVELS`, `ELECTIVES`, `ROLE_ELECTIVES`
 
 Each level holds `grade`, `persona`, a one-line `line`, and five items:
 
@@ -38,7 +42,21 @@ Each level holds `grade`, `persona`, a one-line `line`, and five items:
  u:"https://www.gorspa.org/ai-terminology/"}
 ```
 
-Adding, removing, or re-linking an item is a one-line change. The 201 lead item's description reads `__ROLE__`, which is replaced at render time by the visitor's seat-specific playbook line (`ROLE_PLAYBOOK`). `ELECTIVES` are appended when their condition fires (merchant track below 301, internal track at 101/102, or the "security worries" answer) and deduped against the level's items.
+Adding, removing, or re-linking an item is a one-line change. The 201 lead item's description reads `__ROLE__`, which is replaced at render time by the visitor's seat-specific playbook line (`ROLE_PLAYBOOK`).
+
+Electives are appended after the five items and deduped against them:
+
+| Object | Key | Fires when |
+|---|---|---|
+| `ELECTIVES` | `m` | merchant track, below 301 |
+| `ELECTIVES` | `voice` | merchant track, at 301 |
+| `ELECTIVES` | `i` | internal track, at 101/102 |
+| `ELECTIVES` | `risk` | Q6 = security/IP worries |
+| `ROLE_ELECTIVES` | `tech`, `exec` | the visitor's seat (Q3); not shown on shared links, which don't carry a seat |
+
+To add a seat elective for `sales` or `ops`, add one entry to `ROLE_ELECTIVES`; no other code changes.
+
+**After any edit, run `node scripts/build-plugin.mjs`** so the WordPress plugin gets the same content, and bump the `rspa-pathfinder-version` / `rspa-pathfinder-content-date` meta tags at the top of `index.html`.
 
 ## Look and feel
 
@@ -53,7 +71,7 @@ Fonts are in `--disp` (UI) and `--mono` (register voice). The receipt's texture,
 
 ## Social cards
 
-The `<head>` carries Open Graph and Twitter meta tags. When the quiz gets its permanent URL, update `og:url`, and consider replacing `og:image` (currently the RSPA logo SVG) with a 1200×630 PNG "receipt" card — LinkedIn's crawler prefers raster images.
+The `<head>` carries Open Graph and Twitter meta tags. The WordPress plugin rewrites `og:url` to the quiz's address and, if you set **Social card image**, `og:image` too. For a standalone copy, edit them by hand. A 1200×630 PNG "receipt" card works best, because LinkedIn's crawler prefers raster images over the logo SVG.
 
 ## Deep links
 

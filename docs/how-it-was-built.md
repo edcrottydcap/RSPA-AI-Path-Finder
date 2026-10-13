@@ -45,6 +45,20 @@ Scoring is intentionally simple and transparent: three questions contribute 0–
 
 **Print texture, on purpose.** The receipt's faint horizontal banding and the barcode are CSS gradients — they are the subject (thermal paper and a barcode), not decoration.
 
+## The WordPress plugin (v1.1)
+
+The plugin wraps the same `index.html` rather than re-implementing it. A rewrite rule serves the quiz at `/ai-path-finder/` with settings injected as `window.RSPA_PATHFINDER_CONFIG`; every placement (block, `[pathfinder]` shortcode, widget, floating button, template tag) is an iframe of that URL. The decisions behind it:
+
+- **Popup first.** The AI Resource Hub uses custom page templates, and nobody wants to re-lay-out a page for a quiz. A button or card that opens the quiz in a modal fits any page. The floating button prints from `wp_footer`, so it works even where a template ignores page content.
+- **Look native.** The card is built from the hub's own parts, measured from the live theme: the `#1e73be` section bar of `.first-section-header`, the `#eeeeee` panel of `.ai-desc`, the `#005dac` title color of `.hub-title`, and the flat, square, uppercase `.btn-link.blue` button in `#275ca7`. Fonts inherit from the theme (Proxima Nova on gorspa.org).
+- **No build step, again.** The block editor script is plain ES5 using `wp.element.createElement`, so the plugin folder is exactly what ships.
+- **Result links come home.** Share links point back at the embedding page (the `host` parameter, validated to the site's own domain with `wp_validate_redirect`), and a `?r=` code there reopens that receipt, auto-opening the popup if the page has only a button.
+- **Real phones, real theme.** Testing a copy of the live hub on an emulated iPhone showed the home page's header overflowing to ~825px, which stretches the layout viewport and pushes `position:fixed` elements off-screen. `embed.js` detects that and pins the floating button and popup to `visualViewport`.
+
 ## QA
+
+**v1.1 (plugin).** Tested on WordPress 7.1 (wp-env, PHP 8.2): every PHP file linted; the quiz route with and without pretty permalinks; the `host` parameter rejecting off-site URLs; launcher page matching; shared-link pass-through and auto-open; Esc and backdrop close; iframe grow and shrink on Retake. Screenshots in `docs/images/` were captured by Playwright from saved copies of the live gorspa.org pages with the plugin injected, at 1280px desktop and iPhone 13 emulation; the quiz showed zero horizontal overflow on phones.
+
+**v1.0 (widget).**
 
 The build went through iterated headless-browser rounds (desktop 800px and mobile 390px, plus the shared-link view) with full-page screenshots reviewed at each round, an automated design-quality scan, and an independent design review pass that audited every screen against the brief — its findings (focus management, shared-view honesty, clipboard failure feedback, mobile truncation, back-navigation state, and several visual-consistency items) were all fixed and re-verified, including a keyboard-only completion run.

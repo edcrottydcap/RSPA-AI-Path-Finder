@@ -1,54 +1,58 @@
-# Embedding on WordPress (gorspa.org)
+# Embedding without the plugin
 
-The widget is one self-contained file — `index.html` — with no dependencies on the WordPress theme, no plugins required by the widget itself, and no backend. There are three ways to put it on the site, in order of recommendation.
+**On WordPress, use the plugin.** It does everything below automatically, adds the popup, card, and floating button, and keeps settings in the dashboard: [wordpress-plugin.md](wordpress-plugin.md).
 
-## Option A — iframe on any page (recommended)
+This page is for sites that can't install plugins, or for hosting the quiz somewhere other than WordPress. The quiz is one self-contained file, `index.html`, with no backend.
 
-**1. Upload the file to the site.** Any of these works:
+## Option A: iframe on any page
 
-- **FTP / hosting file manager:** upload `index.html` to a folder in the web root, e.g. `/ai-path-finder/index.html` → it's now served at `https://www.gorspa.org/ai-path-finder/`.
-- **Media Library:** WordPress blocks `.html` uploads by default; a small plugin such as "File Manager" or an HTML-upload enabler lifts that. FTP is cleaner if available.
-- **Child theme folder:** drop it in the theme directory and note the URL.
+**1. Host the file.** Upload `index.html` somewhere public, for example `/ai-path-finder/index.html` in the web root via FTP or the host's file manager, or use the GitHub Pages copy (Option C).
 
-**2. Add a Custom HTML block** to the AI Resource Hub page (or any page) with this snippet, adjusting the `src` to wherever the file landed:
+**2. Add this to the page** (WordPress: a *Custom HTML* block). Adjust `src`:
 
 ```html
-<iframe id="rspa-pathfinder" src="/ai-path-finder/"
-        style="width:100%;border:0;min-height:640px"
-        title="RSPA AI Path Finder"></iframe>
+<iframe data-rspa-pathfinder src="/ai-path-finder/"
+        style="width:100%;border:0;height:640px"
+        allow="clipboard-write" title="RSPA AI Path Finder"></iframe>
 <script>
   window.addEventListener("message", function (e) {
-    if (e.data && e.data.type === "rspa-pathfinder-height") {
-      document.getElementById("rspa-pathfinder").style.height =
-        (e.data.height + 20) + "px";
-    }
+    if (!e.data || e.data.type !== "rspa-pathfinder-height") return;
+    document.querySelectorAll("iframe[data-rspa-pathfinder]").forEach(function (f) {
+      if (f.contentWindow === e.source) f.style.height = (e.data.height + 4) + "px";
+    });
   });
 </script>
 ```
 
-That's the whole integration. The widget posts its own height to the page whenever its content changes, so the iframe grows as the receipt prints — no scrollbars, no cut-off receipt. The `min-height` just prevents a flash before the first message arrives.
+The quiz posts its height whenever its content changes, so the frame grows as the receipt prints and shrinks again on Retake, with no inner scroll bars. Inside a frame the quiz drops its gray background so it sits on the host page. `allow="clipboard-write"` lets "Copy my result link" work.
 
-## Option B — its own page
+## Option B: its own page
 
-Because the file is standalone, it can simply *be* a page: `https://www.gorspa.org/ai-path-finder/`. Link to it from the hub with a button ("Find your AI path →"). This is the best setup for sharing, because deep links (`?r=201i`) and social cards point at a clean URL. If you use this option, update two things inside the file:
+Because the file is standalone, it can *be* the page (`https://www.example.org/ai-path-finder/`). It's the best setup for sharing, because deep links (`?r=201i`) and social cards point at a clean URL. Update two things in the file:
 
-- the `og:url` meta tag in the `<head>` — set it to the final URL;
-- the `SHARE_TARGET` constant in the script — point LinkedIn/email shares at the quiz itself instead of the hub.
+- the `og:url` meta tag in the `<head>`: set it to the final URL;
+- the `SHARE_TARGET` constant in the script: point LinkedIn and email shares at the quiz itself instead of the hub.
 
-## Option C — GitHub Pages (zero server changes)
+## Option C: GitHub Pages (zero server changes)
 
-In this repo: **Settings → Pages → Source: Deploy from a branch → `main` / root**. Within a minute the quiz is live at `https://<owner>.github.io/RSPA-AI-Path-Finder/`. That URL can be linked directly or used as the iframe `src` in Option A — useful for demos and for letting RSPA evaluate it before touching their hosting. (For production, hosting on gorspa.org itself keeps the logo, links, and analytics first-party.)
+This repo already serves the quiz at **https://edcrottydcap.github.io/RSPA-AI-Path-Finder/** (Settings → Pages → Deploy from branch `main` / root). It redeploys automatically on every push to `main`. That URL can be linked directly or used as the iframe `src` in Option A. For production, hosting on gorspa.org itself keeps the logo, links, and analytics first-party, which is what the plugin does.
 
-## After it's live — a short checklist
+## Settings without the plugin
 
-- [ ] Update `og:url` in `index.html` to the real URL (social cards).
-- [ ] Optionally swap `og:image` for a 1200×630 PNG card for richer LinkedIn/Facebook unfurls.
-- [ ] Point `SHARE_TARGET` at the live quiz URL so shares drive people straight into it.
-- [ ] Optionally set `PING_URL` to count completions — see [customization.md](customization.md).
-- [ ] Take the quiz once on desktop and once on a phone from the live page.
+The plugin sets these through `window.RSPA_PATHFINDER_CONFIG`. A hand-hosted copy can define the same object in a `<script>` placed before the quiz's script, or edit the defaults in the file:
+
+```html
+<script>
+  window.RSPA_PATHFINDER_CONFIG = {
+    shareTarget: "https://www.example.org/ai-path-finder/", // LinkedIn/email shares
+    pingUrl: "",                                         // optional response counter
+    resultBase: "https://www.example.org/ai-path-finder/"  // "Copy my result link" base
+  };
+</script>
+```
 
 ## Notes
 
-- The RSPA logo is loaded from `gorspa.org/wp-content/uploads/logo-color.svg`. On gorspa.org that's a same-site request; anywhere else it still works as a normal cross-site image. If it ever can't load, the widget shows a typographic `R·S·P·A` fallback instead of a broken image.
-- Fonts come from Google Fonts (Mulish + Spline Sans Mono). On gorspa.org the widget's first-choice face, Proxima Nova, resolves from the site itself inside Option B-style hosting; inside an iframe the Mulish fallback is what renders, which was chosen to sit comfortably next to Proxima Nova.
-- The widget stores nothing — no cookies, no localStorage, no tracking. GDPR-quiet by default.
+- The RSPA logo loads from `gorspa.org/wp-content/uploads/logo-color.svg`. If it can't load, a typographic `R·S·P·A` fallback appears instead of a broken image.
+- Fonts come from Google Fonts (Mulish and Spline Sans Mono); Proxima Nova is used first where the host page provides it.
+- The quiz stores nothing: no cookies, no localStorage, no tracking.

@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Bump when the curriculum or behavior changes; the WordPress plugin's
+     settings screen displays both values. -->
+<meta name="rspa-pathfinder-version" content="1.1.0">
+<meta name="rspa-pathfinder-content-date" content="2026-10-13">
 <meta name="description" content="RSPA AI Path Finder — a 60-second placement quiz that prints your personalized AI curriculum from the RSPA AI Resource Hub.">
 
 <!-- Open Graph / social cards. Once the quiz has its final public URL,
@@ -281,6 +285,11 @@
 
   ::selection{background:var(--blue);color:#fff}
 
+  /* embedded in an iframe (e.g. the WordPress block): transparent ground, tight
+     padding — the host page provides the spacing. */
+  .embedded body{background:transparent;padding:4px 2px 10px}
+  .embedded .terminal{box-shadow:0 1px 4px rgba(31,74,137,.08)}
+
   @media (max-width:480px){
     .mast{padding:13px 16px 11px}
     .vfd{padding:10px 16px}
@@ -362,15 +371,25 @@
 (function(){
   "use strict";
 
-  /* ————— config ————— */
+  /* ————— config —————
+     The WordPress plugin overrides these by defining window.RSPA_PATHFINDER_CONFIG
+     before this script runs; standalone copies use the defaults below. */
+  var CFG = window.RSPA_PATHFINDER_CONFIG || {};
   var HUB = "https://www.gorspa.org/";
   /* Where LinkedIn / email shares send people. For now this is the AI Resource
      Hub; once the quiz has its own public URL, point this at the quiz instead. */
-  var SHARE_TARGET = HUB + "ai-resource-hub/";
+  var SHARE_TARGET = CFG.shareTarget || HUB + "ai-resource-hub/";
   /* Optional response counter: set to an endpoint URL (Formspree, Google Apps
      Script, etc.) to receive one anonymous POST per completed quiz:
      {level, track, role, ts}. Leave "" to disable — the widget is zero-backend. */
-  var PING_URL = "";
+  var PING_URL = CFG.pingUrl || "";
+  /* Base URL for "Copy my result link" (?r=201i is appended). Defaults to this
+     page; the plugin points it at the WordPress page the quiz is embedded on. */
+  var RESULT_BASE = CFG.resultBase || (location.origin + location.pathname);
+
+  /* inside an iframe: drop the gray page band so the widget sits on the host page */
+  var EMBEDDED = window.parent !== window;
+  if(EMBEDDED) document.documentElement.classList.add("embedded");
 
   /* ————— content: questions ————— */
   var QUESTIONS = [
@@ -465,7 +484,7 @@
         {sku:"PRMPT-102", t:"Prompting Cheat Sheet & Few-Shot", d:"Context, verification, and teaching the AI with examples before you ask.", u:HUB+"ai-tools/"},
         {sku:"CRAFT-102", t:"Advanced Prompting: C.R.A.F.T. & Personas", d:"Context-Role-Action-Format-Tone, expert personas, chain-of-thought — the pro moves.", u:HUB+"ai-tools/"},
         {sku:"SEC-102", t:"Protect Your IP", d:"Zero-trust rules for public tools, and what belongs only in paid, contract-backed platforms.", u:HUB+"ai-misconceptions-best-practices/"},
-        {sku:"DECK-102", t:"Inspire 2026 AI Session Decks", d:"AI Tools Overview and AI Productivity Tools — download the presentations.", u:HUB+"rspa-ai-education-content/"},
+        {sku:"PDF-102", t:"7-Day Social Content Pro Prompt", d:"A two-prompt workflow that turns one chat into a week of posts and images. Fill four blanks, run it.", u:HUB+"wp-content/uploads/7-Day-Social-Media-content-and-Image-Generator-Pro-Prompt.pdf"},
         {sku:"POD-153", t:"Podcast: Zack Kass (ex-OpenAI)", d:"How AI can expand VAR/ISV potential, from OpenAI's former GTM lead.", u:HUB+"blog-rspa-trusted-advisor-ep-153-how-ai-can-expand-var-isv-potential-with-zack-kass/"}
       ]
     },
@@ -477,7 +496,7 @@
         {sku:"PDF-201", t:"Top 10 AI Use Cases for IT Resellers", d:"The internal-productivity playbook, in one PDF.", u:HUB+"wp-content/uploads/Top-10-AI-Use-Cases-for-IT-Resellers-Internal-Productivity-Business-Growth.pdf"},
         {sku:"PDF-202", t:"Stop Talking About AI and Start Using It", d:"A practical application guide for busy channel executives.", u:HUB+"wp-content/uploads/Stop-Talking-About-AI-and-Start-Using-It-A-Practical-Application-for-Busy-Channel-Executives.pdf"},
         {sku:"SEC-201", t:"Governance Guardrails", d:"IP protection defaults and sample partner-NDA language before you scale.", u:HUB+"ai-misconceptions-best-practices/"},
-        {sku:"POD-153", t:"Podcast: Zack Kass (ex-OpenAI)", d:"Where VAR/ISV leverage really is — strategy for the next 24 months.", u:HUB+"blog-rspa-trusted-advisor-ep-153-how-ai-can-expand-var-isv-potential-with-zack-kass/"}
+        {sku:"PDF-203", t:"What VAR & ISV Teams Should Learn Next", d:"RetailNOW 2026 takeaways: core AI skills, a one-page governance checklist, and a 90-day pilot plan.", u:HUB+"wp-content/uploads/What-VAR-ISV-Teams-Should-Learn-Next-About-AI.pdf"}
       ]
     },
     "301":{
@@ -486,8 +505,8 @@
       items:[
         {sku:"MRCH-301", t:"Merchant-Facing AI, by Vertical", d:"What McDonald's, Wegmans, and Sephora are shipping — and what your merchants will ask for next.", u:HUB+"ai-merchant-facing-applications/"},
         {sku:"POD-159", t:"Podcast: AI & Payments Opportunities", d:"For ISOs, agents, ISVs, and VARs — where AI meets the payments stack.", u:HUB+"blog-rspa-trusted-advisor-ep-159-ai-payments-opportunities-for-isos-agents-isvs-and-vars/"},
-        {sku:"DECK-301", t:"Voice AI & Predictive Analysis Decks", d:"Inspire 2026 sessions: Voice AI in Retail IT and AI Predictive Analysis.", u:HUB+"rspa-ai-education-content/"},
-        {sku:"OPS-301", t:"Cross-System Pipeline Intelligence", d:"Fuse CRM, email, transcripts & support data for forecast-grade deal health.", u:HUB+"ai-internal-applications/"},
+        {sku:"PDF-301A", t:"Conversational AI in Retail: Case Studies", d:"Nike, Sephora, Walmart, Kroger, Lowe's — and why VARs must own the conversational layer first.", u:HUB+"wp-content/uploads/Conversational_AI_Case_Studies.pdf"},
+        {sku:"PDF-301B", t:"How Restaurants, Retailers & C-Stores Use AI", d:"Merchant AI use cases by vertical, and how to package AI around outcomes, not a resold chatbot.", u:HUB+"wp-content/uploads/AI-Transforming-Sales-and-Operations.pdf"},
         {sku:"CTA-301", t:"Join the RSPA AI Advisory Group", d:"Shape this hub — contribute case studies and steer what gets built next.", u:"mailto:Membership@GoRSPA.org?subject=RSPA%20AI%20Advisory%20Group"}
       ]
     }
@@ -497,7 +516,15 @@
   var ELECTIVES = {
     m:{sku:"ELEC-M", t:"Elective: Merchant-Facing AI", d:"A preview of the 301 track — real deployments across retail, restaurant & grocery.", u:HUB+"ai-merchant-facing-applications/"},
     i:{sku:"ELEC-I", t:"Elective: Internal AI Applications", d:"A preview of the 201 track — efficiency use cases organized by business outcome.", u:HUB+"ai-internal-applications/"},
-    risk:{sku:"ELEC-S", t:"Elective: IP & Accuracy Guardrails", d:"The zero-trust defaults that let you use AI without losing sleep.", u:HUB+"ai-misconceptions-best-practices/"}
+    risk:{sku:"ELEC-S", t:"Elective: IP & Accuracy Guardrails", d:"The zero-trust defaults that let you use AI without losing sleep.", u:HUB+"ai-misconceptions-best-practices/"},
+    /* 301 merchant track: the Inspire 2026 Voice AI deck (Google Drive .pptx, as linked from the hub) */
+    voice:{sku:"ELEC-V", t:"Elective: Voice AI in Retail IT (deck)", d:"Inspire 2026: phone, kiosk & drive-thru voice AI across retail, restaurant & grocery.", u:"https://drive.google.com/uc?export=download&id=167g3m_W9bVML_R7xXnJOEFtqOKq_wZOw"}
+  };
+
+  /* seat-specific electives (Q3), appended at every level */
+  var ROLE_ELECTIVES = {
+    tech:{sku:"ELEC-T", t:"Elective: AI-Assisted Development", d:"RetailNOW 2026: from vibe coding to a disciplined dev loop — second-model review, PCI built in.", u:HUB+"wp-content/uploads/The-Latest-AI-Enablers-for-ISVs-FINAL.pdf"},
+    exec:{sku:"ELEC-X", t:"Elective: AI Considerations for VAR Leaders", d:"Inspire 2026 deck: a three-rule AI policy, a five-question use-case test, crawl-walk-run.", u:"https://drive.google.com/uc?export=download&id=1Q1Ds4-gEFKq4kEenIg5SFWdfA9tV9MkH"}
   };
 
   var VFD_LINES = [
@@ -570,6 +597,11 @@
 
   /* register keys: A–D or 1–4 answer the open question */
   document.addEventListener("keydown", function(e){
+    /* in a host-page popup, Esc asks the host to close it */
+    if(e.key === "Escape" && EMBEDDED){
+      try{ window.parent.postMessage({type:"rspa-pathfinder-close"}, "*") }catch(err){}
+      return;
+    }
     if(!screens.quiz.classList.contains("active")) return;
     if(e.altKey || e.ctrlKey || e.metaKey) return;
     var idx = "ABCD".indexOf(e.key.toUpperCase());
@@ -629,7 +661,9 @@
     var extra = [];
     if(track==="m" && level!=="301") extra.push(ELECTIVES.m);
     if(track==="i" && (level==="101"||level==="102")) extra.push(ELECTIVES.i);
+    if(track==="m" && level==="301") extra.push(ELECTIVES.voice);
     if(flag==="risk") extra.push(ELECTIVES.risk);
+    if(role && ROLE_ELECTIVES[role]) extra.push(ROLE_ELECTIVES[role]);
     var urls = {}; items.forEach(function(it){urls[it.u+it.t]=1});
     extra = extra.filter(function(e){ if(urls[e.u+e.t]) return false; urls[e.u+e.t]=1; return true });
 
@@ -643,7 +677,7 @@
     h += '<div class="r-sub">AI Resource Hub · Path Finder</div></div>';
     h += '<hr class="rule">';
     h += '<div class="kv"><span>DATE</span><b>'+dateStr+' '+timeStr+'</b></div>';
-    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.0</b></div>';
+    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.1</b></div>';
     h += '<div class="kv"><span>MEMBER SEAT</span><b>'+esc(ROLE_LABEL[role]||"—")+'</b></div>';
     h += '<div class="kv"><span>TRACK</span><b>'+esc(TRACK_LABEL[track]||"—")+'</b></div>';
     h += '<hr class="rule">';
@@ -677,8 +711,7 @@
 
     /* share links */
     var code = level + track;
-    var base = location.origin + location.pathname;
-    var shareUrl = base + "?r=" + code;
+    var shareUrl = RESULT_BASE + (RESULT_BASE.indexOf("?")<0 ? "?" : "&") + "r=" + code;
     var liText = isShared
       ? "Worth 60 seconds for anyone in the retail IT channel: the RSPA AI Path Finder places you on a personalized AI curriculum. This one came back "+L.grade+" — "+L.persona+". Find your path on the RSPA AI Resource Hub: "+SHARE_TARGET
       : "I just took the RSPA AI Path Finder and placed at "+L.grade+" — "+L.persona+". Six quick questions, then a personalized AI curriculum for VARs and ISVs. Find your own path on the RSPA AI Resource Hub: "+SHARE_TARGET;
@@ -743,11 +776,14 @@
   })();
 
   /* ————— iframe auto-height ————— */
+  /* Measures the body, not documentElement.scrollHeight — the latter never
+     shrinks below the iframe's current height, so the frame couldn't collapse
+     after the tall receipt (e.g. on Retake). */
   function postHeight(){
-    if(window.parent === window) return;
+    if(!EMBEDDED) return;
     try{
       window.parent.postMessage({type:"rspa-pathfinder-height",
-        height: document.documentElement.scrollHeight}, "*");
+        height: Math.ceil(document.body.getBoundingClientRect().height)}, "*");
     }catch(e){}
   }
   window.addEventListener("resize", postHeight);
