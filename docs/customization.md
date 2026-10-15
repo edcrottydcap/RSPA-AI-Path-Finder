@@ -69,9 +69,24 @@ var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, POD:29, PDF:3
 
 Give any item its own value with `p:`, as the electives do (`{sku:"ELEC-M", p:99, …}`). The totals print `SUBTOTAL · N ITEMS`, then `COUPON <code> · 100% OFF` for the same amount, then `TOTAL DUE $0.00`. The coupon code comes from the plugin's **Coupon code** setting (or `CFG.coupon`).
 
+## The RSPA reward
+
+`CFG.reward` (set by the plugin's **RSPA reward** settings) turns on a discount-code coupon under the receipt totals:
+
+```js
+window.RSPA_PATHFINDER_CONFIG = { reward: {
+  code: "AIPATH15", headline: "15% off RetailNOW registration",
+  details: "New registrations only.", url: "https://…", cta: "Register now",
+  unlock: "complete",   // "complete" | "count" | "receipt"
+  count: 3              // used when unlock is "count"
+}};
+```
+
+It unlocks from the same picked-up count as the checklist. The plugin passes the same object to the floating button (`data-reward` on the launcher), so both agree on locked or unlocked.
+
 ## The picked-up checklist
 
-Every receipt line has a checkbox that ticks when the visitor opens it, plus a `PICKED UP n / N` total. Ticks are saved in `localStorage` under `rspa-pathfinder-picked-up` (URL → timestamp), so they survive retakes and return visits, and a "clear them" link resets them. The visitor's own result is also saved under `rspa-pathfinder-path` (level, persona, and the receipt's lines), which the WordPress plugin's floating button reads to show progress. If storage is blocked, boxes still tick for the visit and nothing breaks. Shared links (`?r=`) never overwrite the viewer's own path.
+Every receipt line has a checkbox that ticks when the visitor opens it, plus a `PICKED UP n / N` total. Ticks are saved in `localStorage` under `rspa-pathfinder-picked-up-v2` (one entry per receipt line, `SKU|URL` → timestamp), so they survive retakes and return visits, and a "clear them" link resets them. The visitor's own result is also saved under `rspa-pathfinder-path` (level, persona, and the receipt's lines), which the WordPress plugin's floating button reads to show progress. If storage is blocked, boxes still tick for the visit and nothing breaks. Shared links (`?r=`) never overwrite the viewer's own path.
 
 ## Look and feel
 

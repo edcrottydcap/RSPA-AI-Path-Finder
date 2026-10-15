@@ -310,7 +310,31 @@ function rspa_apf_launcher() {
 	$text     = rspa_apf_setting( 'launcher_text' );
 	$position = rspa_apf_launcher_position();
 	$progress = rspa_apf_setting( 'launcher_progress' ) ? ' data-progress' : '';
+	$reward   = rspa_apf_reward();
+	if ( $progress && $reward ) {
+		$progress .= " data-reward='" . esc_attr( wp_json_encode( $reward ) ) . "'";
+	}
 	echo '<div class="rspa-apf rspa-apf-launcher rspa-apf-launcher--' . esc_attr( $position ) . '"' . $progress . '>' . rspa_apf_button( $text ? $text : rspa_apf_card_defaults()['text'], 'popup' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in rspa_apf_button.
+}
+
+/**
+ * The RSPA reward settings for the quiz and the floating button, or null when off.
+ *
+ * @return array|null
+ */
+function rspa_apf_reward() {
+	if ( ! rspa_apf_setting( 'reward' ) || '' === rspa_apf_setting( 'reward_code' ) ) {
+		return null;
+	}
+	return array(
+		'code'     => rspa_apf_setting( 'reward_code' ),
+		'headline' => rspa_apf_setting( 'reward_headline' ),
+		'details'  => rspa_apf_setting( 'reward_details' ),
+		'url'      => rspa_apf_setting( 'reward_url' ),
+		'cta'      => rspa_apf_setting( 'reward_cta' ),
+		'unlock'   => rspa_apf_setting( 'reward_unlock' ),
+		'count'    => (int) rspa_apf_setting( 'reward_count' ),
+	);
 }
 
 /**

@@ -58,6 +58,8 @@ Wondering where to start with AI — or what to read next? The AI Path Finder as
 
 Every line on the receipt has a checkbox and a price. Open a resource and its box ticks off ("PICKED UP 3 / 7"), and the subtotal shows what the whole reading list is worth before coupon **PATHFINDER** takes 100% off. On a WordPress site the floating button then becomes your path: progress, encouragement, and a **Next up** link, and visiting a page on your path ticks it off automatically.
 
+RSPA can also switch on a **reward**: a real discount code (membership, an event, a course) that prints as a tear-off coupon once a visitor has picked up their path.
+
 There's no signup, nothing is sent anywhere, and it takes about a minute. The checkmarks are remembered only in your own browser. Your result comes with a shareable link, a pre-written LinkedIn post, and a drafted email, so a team lead can send it to the whole shop and compare receipts.
 
 ## How the placement works

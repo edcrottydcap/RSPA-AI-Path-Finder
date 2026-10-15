@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 — 2026-10-15
+
+- **RSPA reward (discount code)**, off by default. Plugin settings: on/off, the code, a headline, fine print, a redeem link and button text, and when it unlocks: when the whole path is picked up (default), after N items, or right away.
+  - Locked: the receipt shows "RSPA reward · locked" with a progress bar and how many more items to pick up; the floating button's encouragement counts down to it.
+  - Unlocked: a tear-off coupon prints under the receipt totals (code, Copy button, fine print, redeem button), the same card appears in the floating button's panel, and a "★ RSPA reward unlocked!" bubble announces it.
+  - Unlocking happens in the visitor's browser, so the code is visible in the page source. Use a shareable promotional code.
+- Receipt reads "PATH FINDER v1.3".
+
 ## 1.2.0 — 2026-10-15
 
 - **Picked-up checklist.** Every receipt line has a checkbox that ticks when the visitor opens it, with a `PICKED UP n / N` total. Saved in the visitor's own browser (`localStorage`), never sent anywhere; a "clear them" link resets it.

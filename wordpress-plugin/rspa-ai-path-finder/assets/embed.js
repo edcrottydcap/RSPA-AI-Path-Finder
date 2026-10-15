@@ -17,7 +17,7 @@
 	'use strict';
 
 	var PATH_KEY = 'rspa-pathfinder-path';
-	var PICK_KEY = 'rspa-pathfinder-picked-up';
+	var PICK_KEY = 'rspa-pathfinder-picked-up-v2'; /* keys are SKU|URL, one per receipt line */
 	var modal = null, lastFocus = null;
 
 	function frameFor(source) {
@@ -122,6 +122,11 @@
 	}
 
 	function cheer(p) {
+		var need = rewardNeed(p.total);
+		if (reward && p.n < need) {
+			var togo = need - p.n;
+			return (p.n ? 'Nice going! ' : 'Your path is ready. ') + 'Pick up ' + togo + ' more to unlock your RSPA reward.';
+		}
 		var left = p.total - p.n;
 		if (!p.n) return 'Your path is ready. Start with the first item.';
 		if (!left) return 'Path complete! You picked up everything on your receipt. Ready for the next level?';
@@ -130,7 +135,15 @@
 		return 'Nice start! ' + left + ' to go.';
 	}
 
-	var launcher = null, baseSrc = '', defaultHtml = '', panelOpen = false, justPicked = null;
+	var launcher = null, baseSrc = '', defaultHtml = '', panelOpen = false, justPicked = null, reward = null, unlockedNow = false;
+
+	/* RSPA reward (plugin setting): how many picked-up items unlock it */
+	function rewardNeed(total) {
+		if (!reward) return Infinity;
+		if (reward.unlock === 'receipt') return 0;
+		if (reward.unlock === 'count') return Math.min(Math.max(1, +reward.count || 1), total);
+		return total;
+	}
 
 	function receiptSrc(code) {
 		var a = url(baseSrc);
@@ -160,6 +173,14 @@
 		h += '<div class="rspa-apf-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + p.total + '" aria-valuenow="' + p.n + '"><i style="width:' + pct + '%"></i></div>';
 		h += '<p class="rspa-apf-panel__count"><b>' + p.n + ' of ' + p.total + '</b> picked up</p>';
 		h += '<p class="rspa-apf-panel__cheer">' + esc(cheer(p)) + '</p>';
+		if (reward && p.n >= rewardNeed(p.total)) {
+			h += '<div class="rspa-apf-reward"><p class="rspa-apf-reward__h">★ RSPA reward unlocked</p>';
+			h += '<p class="rspa-apf-reward__t">' + esc(reward.headline || 'Your RSPA discount') + '</p>';
+			h += '<p class="rspa-apf-reward__code"><b>' + esc(reward.code) + '</b><button type="button" data-apf="copy">Copy</button></p>';
+			if (reward.details) h += '<p class="rspa-apf-reward__d">' + esc(reward.details) + '</p>';
+			if (reward.url) h += '<a class="rspa-apf-reward__cta" href="' + esc(reward.url) + '" target="_blank" rel="noopener">' + esc(reward.cta || 'Redeem now') + ' →</a>';
+			h += '</div>';
+		}
 		if (p.next) {
 			h += '<a class="rspa-apf-button rspa-apf-next" data-k="' + esc(p.next.k) + '" href="' + esc(p.next.u) + '"' + (opensHere(p.next.u) ? '' : ' target="_blank" rel="noopener"') + '>Next up: ' + esc(p.next.t) + ' →</a>';
 		} else {
@@ -175,7 +196,9 @@
 		h += '<p class="rspa-apf-panel__foot"><a href="' + esc(receiptSrc(p.path.code)) + '" data-rspa-apf-open="' + esc(receiptSrc(p.path.code)) + '">View my receipt</a>';
 		if (!done) h += ' · <a href="' + esc(quizSrc()) + '" data-rspa-apf-open="' + esc(quizSrc()) + '">Retake</a>';
 		h += '</p></div></div>';
-		if (justPicked) {
+		if (unlockedNow) {
+			h += '<p class="rspa-apf-bubble rspa-apf-bubble--reward" role="status">★ RSPA reward unlocked! Open your path for the code.</p>';
+		} else if (justPicked) {
 			h += '<p class="rspa-apf-bubble" role="status">✓ Picked up: ' + esc(justPicked.t) + ' · ' + p.n + ' of ' + p.total + '</p>';
 		}
 		h += '<button type="button" class="rspa-apf-button rspa-apf-pill' + (done ? ' rspa-apf-pill--done' : '') + '" data-apf="toggle" aria-expanded="' + panelOpen + '" aria-controls="rspa-apf-panel">';
@@ -191,25 +214,34 @@
 		var a = launcher.querySelector('a[data-rspa-apf-open]');
 		baseSrc = a ? a.getAttribute('data-rspa-apf-open') : '';
 		defaultHtml = launcher.innerHTML;
+		try { reward = JSON.parse(launcher.getAttribute('data-reward') || 'null'); } catch (e) { reward = null; }
 
 		/* Landing on a page that's on the path ticks it off. */
 		var p = progress();
 		if (p) {
+			var before = p.n;
 			p.path.lines.forEach(function (l) {
 				if (!p.picked[l.k] && isHere(l.u)) { p.picked[l.k] = Date.now(); justPicked = l; }
 			});
 			if (justPicked) {
 				write(PICK_KEY, p.picked);
-				setTimeout(function () { justPicked = null; renderLauncher(); }, 5000);
+				var need = rewardNeed(p.total);
+				unlockedNow = !!reward && before < need && before + 1 >= need;
+				setTimeout(function () { justPicked = null; unlockedNow = false; renderLauncher(); }, unlockedNow ? 8000 : 5000);
 			}
 		}
 
 		launcher.addEventListener('click', function (e) {
-			var t = e.target.closest ? e.target.closest('[data-apf="toggle"], a[data-k]') : null;
+			var t = e.target.closest ? e.target.closest('[data-apf], a[data-k]') : null;
 			if (!t) return;
+			if (t.getAttribute('data-apf') === 'copy') {
+				var done = function () { t.textContent = 'Copied'; setTimeout(function () { t.textContent = 'Copy'; }, 1600); };
+				try { navigator.clipboard.writeText(reward.code).then(done, function () {}); } catch (err) {}
+				return;
+			}
 			if (t.getAttribute('data-apf') === 'toggle') {
 				panelOpen = !panelOpen;
-				justPicked = null;
+				justPicked = null; unlockedNow = false;
 				renderLauncher();
 				if (panelOpen) { var first = launcher.querySelector('.rspa-apf-next'); if (first) first.focus(); }
 				return;

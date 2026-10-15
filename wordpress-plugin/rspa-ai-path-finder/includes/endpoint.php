@@ -121,6 +121,7 @@ function rspa_apf_serve() {
 		'pingUrl'     => $preview ? '' : rspa_apf_setting( 'ping_url' ),
 		'resultBase'  => $result_base,
 		'coupon'      => rspa_apf_setting( 'coupon' ),
+		'reward'      => rspa_apf_reward(),
 	);
 
 	$html = rspa_apf_widget_html();

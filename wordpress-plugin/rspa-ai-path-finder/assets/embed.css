@@ -142,6 +142,17 @@
 	content: ""; position: absolute; left: 3px; top: 0; width: 3.5px; height: 7px;
 	border: solid #fff; border-width: 0 1.7px 1.7px 0; transform: rotate(45deg);
 }
+/* RSPA reward card in the panel — a tear-off coupon */
+.rspa-apf-reward { border: 1.5px dashed #c02b0a; background: #fdf5f3; padding: 10px 12px; text-align: center; }
+.rspa-apf-panel .rspa-apf-reward__h { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #c02b0a; }
+.rspa-apf-panel .rspa-apf-reward__t { font-weight: 800; font-size: 15px; color: var(--rspa-apf-navy); margin-top: 3px; line-height: 1.25; }
+.rspa-apf-panel .rspa-apf-reward__code { display: flex; justify-content: center; margin-top: 8px; }
+.rspa-apf-reward__code b { font-family: ui-monospace, Menlo, monospace; font-size: 17px; letter-spacing: .1em; padding: 4px 10px; border: 2px solid #2d2d2d; background: #fff; color: #2d2d2d; }
+.rspa-apf-reward__code button { border: 2px solid #2d2d2d; border-left: 0; background: #2d2d2d; color: #fff; font-size: 12px; font-weight: 700; padding: 0 10px; cursor: pointer; }
+.rspa-apf-panel .rspa-apf-reward__d { font-size: 12px; color: #6b7280; margin-top: 6px; line-height: 1.4; }
+.rspa-apf-reward__cta { display: inline-block; margin-top: 8px; font-weight: 700; font-size: 13px; color: #fff; background: var(--rspa-apf-btn); padding: 7px 12px; text-decoration: none; }
+.rspa-apf-reward__cta:hover, .rspa-apf-reward__cta:focus { color: #fff; background: var(--rspa-apf-navy); }
+.rspa-apf-bubble--reward { background: #c02b0a; }
 .rspa-apf-panel__foot { font-size: 13px; }
 .rspa-apf-panel__foot a { color: var(--rspa-apf-title); }
 .rspa-apf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

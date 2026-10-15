@@ -110,8 +110,28 @@ Take the quiz once on a computer and once on a phone, from a private window.
 | Social card image | 1200×630 image for LinkedIn/Teams/Facebook link previews | RSPA logo |
 | Floating button | On/off, which pages, wording, position (5 choices) | Off · AI hub pages pre-filled · bottom right |
 | Progress tracker | After the quiz, the floating button shows the visitor's path and ticks off visited pages | On |
+| RSPA reward | A real discount code that unlocks as a tear-off coupon; see below | Off |
 
 The page also shows the widget version, the curriculum date, copy-ready shortcodes, and a live preview (preview runs are never counted).
+
+## RSPA reward (discount code)
+
+Give visitors a reason to finish their path. Under **Settings → AI Path Finder → RSPA reward**:
+
+| Field | Example |
+|---|---|
+| Offer a reward | ✔ on |
+| Discount code | `AIPATH15` |
+| Headline | 15% off RetailNOW registration |
+| Fine print | New registrations only. Expires December 31. |
+| Redeem link + button text | the registration page · "Register now" |
+| Unlocks | when the whole path is picked up (default) · after N items · right away |
+
+While locked, the receipt shows **RSPA reward · locked** with a progress bar ("Pick up 3 more items…"), and the floating button's panel counts down to it. Once unlocked, a tear-off coupon prints under the receipt totals with the code, a **Copy** button, the fine print and the redeem button. The same card appears in the panel, and a "★ RSPA reward unlocked!" bubble announces it.
+
+<p align="center"><img src="images/reward-receipt.jpg" alt="Receipt with an unlocked RSPA reward coupon" width="420"> <img src="images/reward-panel.jpg" alt="Floating panel with the reward card" width="420"></p>
+
+> **The code isn't secret.** There's no login or server, so unlocking happens in the visitor's browser and the code is in the page source. Use a promotional code you're happy to see shared (track redemptions on the checkout side), not a single-use voucher.
 
 ## Shortcode reference
 
@@ -165,7 +185,7 @@ flowchart LR
 - **Auto-sizing.** The quiz posts its height to the host page, so the iframe grows and shrinks with it. Several quizzes on one page are matched by the sending window.
 - **Result links come home.** "Copy my result link" points at the page the visitor was on (`?r=201i`). Opening it pops that receipt open, whether the page has an inline quiz, a card, a button, or only the floating button. The `host` parameter is validated against the site's own domain.
 - **Phone-safe.** On phones the popup goes full screen. If a theme's layout overflows the screen (the gorspa.org hub home page's header does), the floating button and popup pin themselves to the visible screen via `visualViewport`.
-- **Progress stays on the visitor's device.** The receipt's checkmarks and the visitor's path live in the site's `localStorage` (keys `rspa-pathfinder-picked-up` and `rspa-pathfinder-path`). The quiz frame is served from the same site, so the host page's floating button reads the same keys. Nothing is sent anywhere, and there are no cookies. Receipt lines tick when opened; hub pages also tick when visited, if they're on the same site as the plugin.
+- **Progress stays on the visitor's device.** The receipt's checkmarks and the visitor's path live in the site's `localStorage` (keys `rspa-pathfinder-picked-up-v2` and `rspa-pathfinder-path`). The quiz frame is served from the same site, so the host page's floating button reads the same keys. Nothing is sent anywhere, and there are no cookies. Receipt lines tick when opened; hub pages also tick when visited, if they're on the same site as the plugin.
 - **Private by default.** Nothing leaves the browser unless you set a response counter.
 
 Plugin files:

@@ -31,6 +31,14 @@ function rspa_apf_defaults() {
 		'launcher_text'     => '',
 		'launcher_position' => 'bottom-right',
 		'launcher_progress' => '1',
+		'reward'            => '',
+		'reward_code'       => '',
+		'reward_headline'   => '',
+		'reward_details'    => '',
+		'reward_url'        => '',
+		'reward_cta'        => '',
+		'reward_unlock'     => 'complete',
+		'reward_count'      => '3',
 		'launcher_pages'    => implode( "\n", rspa_apf_hub_paths() ),
 	);
 }
@@ -121,6 +129,14 @@ function rspa_apf_sanitize( $in ) {
 	$out['launcher_text']     = isset( $in['launcher_text'] ) ? sanitize_text_field( $in['launcher_text'] ) : '';
 	$out['launcher_position'] = ( isset( $in['launcher_position'] ) && array_key_exists( $in['launcher_position'], rspa_apf_launcher_positions() ) ) ? $in['launcher_position'] : 'bottom-right';
 	$out['launcher_progress'] = empty( $in['launcher_progress'] ) ? '' : '1';
+	$out['reward']            = empty( $in['reward'] ) ? '' : '1';
+	$out['reward_code']       = isset( $in['reward_code'] ) ? substr( strtoupper( preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $in['reward_code'] ) ), 0, 30 ) : '';
+	$out['reward_headline']   = isset( $in['reward_headline'] ) ? sanitize_text_field( $in['reward_headline'] ) : '';
+	$out['reward_details']    = isset( $in['reward_details'] ) ? sanitize_textarea_field( $in['reward_details'] ) : '';
+	$out['reward_url']        = isset( $in['reward_url'] ) ? esc_url_raw( trim( $in['reward_url'] ), array( 'https', 'http' ) ) : '';
+	$out['reward_cta']        = isset( $in['reward_cta'] ) ? sanitize_text_field( $in['reward_cta'] ) : '';
+	$out['reward_unlock']     = ( isset( $in['reward_unlock'] ) && in_array( $in['reward_unlock'], array( 'receipt', 'count', 'complete' ), true ) ) ? $in['reward_unlock'] : 'complete';
+	$out['reward_count']      = (string) max( 1, min( 10, absint( $in['reward_count'] ?? 3 ) ) );
 	if ( isset( $in['launcher_pages'] ) ) {
 		$lines                 = array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', (string) $in['launcher_pages'] ) ) );
 		$out['launcher_pages'] = implode( "\n", array_map( 'sanitize_text_field', $lines ) );
@@ -352,6 +368,46 @@ function rspa_apf_settings_page() {
 					<td>
 						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[launcher_progress]" value="1" <?php checked( $opts['launcher_progress'], '1' ); ?>> <?php esc_html_e( 'After the quiz, turn the button into the visitor\'s path', 'rspa-ai-path-finder' ); ?></label>
 						<p class="description"><?php esc_html_e( 'Shows "AI 201 path · 2 of 7", a Next-up link, the checklist, and encouragement. Visiting a page on the path ticks it off. Progress is kept in the visitor\'s own browser only.', 'rspa-ai-path-finder' ); ?></p>
+					</td>
+				</tr>
+			</table>
+			<h2 id="reward"><?php esc_html_e( 'RSPA reward (discount code)', 'rspa-ai-path-finder' ); ?></h2>
+			<p class="description" style="max-width:720px"><?php esc_html_e( 'Reward visitors for working through their path with a real RSPA discount code (membership, an event, a course). It prints as a tear-off coupon on the receipt and appears in the floating button\'s panel once unlocked.', 'rspa-ai-path-finder' ); ?></p>
+			<table class="form-table" role="presentation">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Offer a reward', 'rspa-ai-path-finder' ); ?></th>
+					<td><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[reward]" value="1" <?php checked( $opts['reward'], '1' ); ?>> <?php esc_html_e( 'Show the reward on receipts', 'rspa-ai-path-finder' ); ?></label></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="rspa-apf-rcode"><?php esc_html_e( 'Discount code', 'rspa-ai-path-finder' ); ?></label></th>
+					<td><input id="rspa-apf-rcode" type="text" class="regular-text" style="width:16em;text-transform:uppercase" maxlength="30" name="<?php echo esc_attr( $name ); ?>[reward_code]" value="<?php echo esc_attr( $opts['reward_code'] ); ?>" placeholder="AIPATH15"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="rspa-apf-rhead"><?php esc_html_e( 'Headline', 'rspa-ai-path-finder' ); ?></label></th>
+					<td><input id="rspa-apf-rhead" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[reward_headline]" value="<?php echo esc_attr( $opts['reward_headline'] ); ?>" placeholder="<?php esc_attr_e( '15% off RetailNOW registration', 'rspa-ai-path-finder' ); ?>"></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="rspa-apf-rdet"><?php esc_html_e( 'Fine print', 'rspa-ai-path-finder' ); ?></label></th>
+					<td><textarea id="rspa-apf-rdet" rows="2" class="large-text" style="max-width:520px" name="<?php echo esc_attr( $name ); ?>[reward_details]" placeholder="<?php esc_attr_e( 'New registrations only. Expires December 31.', 'rspa-ai-path-finder' ); ?>"><?php echo esc_textarea( $opts['reward_details'] ); ?></textarea></td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="rspa-apf-rurl"><?php esc_html_e( 'Redeem link', 'rspa-ai-path-finder' ); ?></label></th>
+					<td>
+						<input id="rspa-apf-rurl" type="url" class="regular-text" name="<?php echo esc_attr( $name ); ?>[reward_url]" value="<?php echo esc_attr( $opts['reward_url'] ); ?>" placeholder="https://www.gorspa.org/…">
+						<input type="text" style="width:12em" name="<?php echo esc_attr( $name ); ?>[reward_cta]" value="<?php echo esc_attr( $opts['reward_cta'] ); ?>" placeholder="<?php esc_attr_e( 'Redeem now', 'rspa-ai-path-finder' ); ?>" aria-label="<?php esc_attr_e( 'Button text', 'rspa-ai-path-finder' ); ?>">
+						<p class="description"><?php esc_html_e( 'Optional. Where the code is used, and the button text.', 'rspa-ai-path-finder' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Unlocks', 'rspa-ai-path-finder' ); ?></th>
+					<td>
+						<fieldset>
+							<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[reward_unlock]" value="complete" <?php checked( $opts['reward_unlock'], 'complete' ); ?>> <?php esc_html_e( 'When the whole path is picked up (recommended)', 'rspa-ai-path-finder' ); ?></label><br>
+							<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[reward_unlock]" value="count" <?php checked( $opts['reward_unlock'], 'count' ); ?>> <?php esc_html_e( 'After picking up', 'rspa-ai-path-finder' ); ?></label>
+							<input type="number" min="1" max="10" style="width:4em" name="<?php echo esc_attr( $name ); ?>[reward_count]" value="<?php echo esc_attr( $opts['reward_count'] ); ?>" aria-label="<?php esc_attr_e( 'Number of items', 'rspa-ai-path-finder' ); ?>"> <?php esc_html_e( 'items', 'rspa-ai-path-finder' ); ?><br>
+							<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[reward_unlock]" value="receipt" <?php checked( $opts['reward_unlock'], 'receipt' ); ?>> <?php esc_html_e( 'Right away, on every receipt', 'rspa-ai-path-finder' ); ?></label>
+						</fieldset>
+						<p class="description"><?php esc_html_e( 'Unlocking happens in the visitor\'s browser, with no login, so the code is visible to anyone who looks at the page source. Use a promotional code you\'re happy to have shared, not a single-use secret.', 'rspa-ai-path-finder' ); ?></p>
 					</td>
 				</tr>
 			</table>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!-- Bump when the curriculum or behavior changes; the WordPress plugin's
      settings screen displays both values. -->
-<meta name="rspa-pathfinder-version" content="1.2.0">
+<meta name="rspa-pathfinder-version" content="1.3.0">
 <meta name="rspa-pathfinder-content-date" content="2026-10-13">
 <meta name="description" content="RSPA AI Path Finder — a 60-second placement quiz that prints your personalized AI curriculum from the RSPA AI Resource Hub.">
 
@@ -280,6 +280,22 @@
     color:var(--blue);margin-top:12px;min-height:16px;opacity:0;transition:opacity .25s;
   }
   .toast.show{opacity:1}
+  /* RSPA reward: a tear-off coupon printed under the totals once unlocked */
+  .reward{margin:14px 0 4px;padding:12px 12px 13px;border:1.5px dashed rgba(45,45,45,.45);text-align:center}
+  .reward .rw-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+  .reward .rw-t{font-family:var(--disp);font-weight:800;font-size:16px;color:var(--navy);margin-top:4px;line-height:1.25}
+  .reward .rw-d{font-size:11.5px;color:var(--ink-soft);margin-top:6px;line-height:1.45}
+  .reward .rw-bar{height:6px;background:rgba(45,45,45,.12);margin:10px 0 2px}
+  .reward .rw-bar i{display:block;height:100%;background:var(--blue)}
+  .reward.open{border-color:var(--red);background:rgba(192,43,10,.04)}
+  .reward.open .rw-h{color:var(--red);font-weight:700}
+  .reward .rw-code{display:flex;justify-content:center;align-items:stretch;gap:0;margin:10px auto 2px;width:max-content;max-width:100%}
+  .reward .rw-code b{font-size:19px;letter-spacing:.12em;padding:6px 12px;border:2px solid var(--ink);background:#fff;color:var(--ink);overflow-wrap:anywhere}
+  .reward .rw-code button{font:inherit;font-size:11px;letter-spacing:.1em;border:2px solid var(--ink);border-left:0;background:var(--ink);color:#fff;padding:0 10px;cursor:pointer}
+  .reward .rw-code button:focus-visible,.reward .rw-cta:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .reward .rw-cta{display:inline-block;margin-top:9px;font-family:var(--disp);font-weight:700;font-size:13.5px;color:#fff;background:var(--blue);padding:8px 14px;border-radius:3px;text-decoration:none}
+  .reward .rw-cta:hover{background:var(--blue-dark)}
+  .reward.just{animation:stamp .55s var(--ease)}
   .picked-note{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--txt-soft);margin-top:6px}
   .picked-note button{background:none;border:none;color:var(--blue);cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:2px;padding:0}
   .shared-note{
@@ -402,6 +418,16 @@
   var RESULT_BASE = CFG.resultBase || (location.origin + location.pathname);
   /* Coupon printed on the receipt: every line's value comes off, total stays $0.00. */
   var COUPON = String(CFG.coupon || "PATHFINDER").toUpperCase();
+  /* Optional RSPA reward (WordPress plugin → "RSPA reward"): a real discount
+     code printed as a tear-off coupon once the visitor has picked up enough of
+     their path. {code, headline, details, url, cta, unlock:"receipt"|"count"|"complete", count} */
+  var REWARD = (CFG.reward && CFG.reward.code) ? CFG.reward : null;
+  function rewardNeeded(total){
+    if(!REWARD) return Infinity;
+    if(REWARD.unlock === "receipt") return 0;
+    if(REWARD.unlock === "count") return Math.min(Math.max(1, +REWARD.count || 1), total);
+    return total;
+  }
 
   /* inside an iframe: drop the gray page band so the widget sits on the host page */
   var EMBEDDED = window.parent !== window;
@@ -704,7 +730,7 @@
     h += '<div class="r-sub">AI Resource Hub · Path Finder</div></div>';
     h += '<hr class="rule">';
     h += '<div class="kv"><span>DATE</span><b>'+dateStr+' '+timeStr+'</b></div>';
-    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.2</b></div>';
+    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.3</b></div>';
     h += '<div class="kv"><span>MEMBER SEAT</span><b>'+esc(ROLE_LABEL[role]||"—")+'</b></div>';
     h += '<div class="kv"><span>TRACK</span><b>'+esc(TRACK_LABEL[track]||"—")+'</b></div>';
     h += '<hr class="rule">';
@@ -718,7 +744,7 @@
     lines.forEach(function(it){
       var ext = it.u.indexOf("mailto:")===0 ? '' : ' target="_blank" rel="noopener"';
       var price = priceOf(it); value += price;
-      h += '<a class="item" data-key="'+esc(pickKey(it.u))+'" href="'+esc(it.u)+'"'+ext+'>';
+      h += '<a class="item" data-key="'+esc(pickKey(it))+'" href="'+esc(it.u)+'"'+ext+'>';
       h += '<span class="t"><span class="nm"><span class="box" aria-hidden="true"></span>'+esc(it.t)+'<span class="sr"> (picked up)</span></span>';
       h += '<span class="pr"><span class="sku">'+esc(it.sku)+'</span>'+money(price)+'</span></span>';
       h += '<span class="d">'+esc(it.d)+'</span>';
@@ -735,12 +761,14 @@
     h += '<div class="kv"><span>FEAR OF AI</span><b>−100%</b></div>';
     h += '<div class="kv grand"><span>TOTAL DUE</span><span>$0.00</span></div>';
     h += '</div>';
+    if(REWARD) h += '<div class="reward" id="reward" aria-live="polite"></div>';
     h += '<hr class="rule">';
     h += '<div class="r-center"><div class="barcode" aria-hidden="true"></div>';
     h += '<div class="kv" style="justify-content:center;gap:6px"><span>'+level+'-'+track.toUpperCase()+(role?'-'+role.toUpperCase().slice(0,4):'')+'</span></div>';
     h += '<p class="thanks" style="margin-top:10px">*** Thank you for learning with RSPA ***<br>No refunds on knowledge</p></div>';
 
     $("receipt").innerHTML = h;
+    rewardWasOpen = null;
     paintPicked();
 
     /* Remember the visitor's own path (not a shared one) so the host site's
@@ -750,7 +778,7 @@
       try{
         localStorage.setItem(PATH_KEY, JSON.stringify({v:1, level:level, grade:L.grade, persona:L.persona,
           code:level+track, ts:Date.now(),
-          lines:lines.map(function(it){ return {t:it.t, u:it.u, sku:it.sku, k:pickKey(it.u)} })}));
+          lines:lines.map(function(it){ return {t:it.t, u:it.u, sku:it.sku, k:pickKey(it)} })}));
       }catch(e){}
     }
 
@@ -804,10 +832,12 @@
      only (never sent anywhere); survives retakes and return visits. Storage can
      be blocked (private mode, sandboxed frames): then boxes still tick for the
      visit, they just aren't remembered. */
-  var PICK_KEY = "rspa-pathfinder-picked-up";
+  var PICK_KEY = "rspa-pathfinder-picked-up-v2"; /* v2: keyed per line (SKU|URL) */
   var PATH_KEY = "rspa-pathfinder-path";
   var picked = (function(){ try{ return JSON.parse(localStorage.getItem(PICK_KEY) || "{}") || {} }catch(e){ return {} } })();
-  function pickKey(u){ return u.indexOf("mailto:")===0 ? u.split("?")[0] : u.split("#")[0] }
+  /* one checkmark per receipt line: two lines can share a page (e.g. both 102
+     prompting items live on /ai-tools/), so the key is SKU + URL */
+  function pickKey(it){ return it.sku + "|" + (it.u.indexOf("mailto:")===0 ? it.u.split("?")[0] : it.u.split("#")[0]) }
   function savePicked(){ try{ localStorage.setItem(PICK_KEY, JSON.stringify(picked)) }catch(e){} }
   function paintPicked(){
     var els = $("receipt").querySelectorAll(".item[data-key]"), n = 0;
@@ -818,6 +848,37 @@
     }
     var c = $("pickedCount"); if(c) c.textContent = n;
     $("pickedNote").hidden = !Object.keys(picked).length;
+    paintReward(n, els.length);
+  }
+  var rewardWasOpen = null;
+  function paintReward(n, total){
+    var box = $("reward"); if(!box || !REWARD) return;
+    var need = rewardNeeded(total), open = n >= need, left = need - n;
+    var r = '';
+    if(open){
+      r += '<div class="rw-h">★ RSPA reward unlocked ★</div>';
+      r += '<div class="rw-t">'+esc(REWARD.headline || "Your RSPA discount")+'</div>';
+      r += '<div class="rw-code"><b>'+esc(REWARD.code)+'</b><button type="button" id="rwCopy">COPY</button></div>';
+      if(REWARD.details) r += '<div class="rw-d">'+esc(REWARD.details)+'</div>';
+      if(REWARD.url) r += '<a class="rw-cta" href="'+esc(REWARD.url)+'" target="_blank" rel="noopener">'+esc(REWARD.cta || "Redeem now")+' →</a>';
+    } else {
+      r += '<div class="rw-h">RSPA reward · locked</div>';
+      r += '<div class="rw-t">'+esc(REWARD.headline || "Your RSPA discount")+'</div>';
+      r += '<div class="rw-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+need+'" aria-valuenow="'+n+'"><i style="width:'+Math.round(n/need*100)+'%"></i></div>';
+      r += '<div class="rw-d">Pick up '+left+' more item'+(left===1?'':'s')+' on this receipt to unlock your code.</div>';
+    }
+    box.innerHTML = r;
+    box.classList.toggle("open", open);
+    if(open && rewardWasOpen === false && !reduced){ box.classList.remove("just"); void box.offsetWidth; box.classList.add("just"); }
+    rewardWasOpen = open;
+    var cp = $("rwCopy");
+    if(cp) cp.onclick = function(){
+      var t = $("toast"), msg = function(m){ t.textContent = m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show") }, 3000) };
+      var ok = function(){ msg("CODE COPIED — " + REWARD.code) }, no = function(){ msg("YOUR CODE: " + REWARD.code) };
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(REWARD.code).then(ok, function(){ fallbackCopy(REWARD.code, ok, no) }) }
+      else fallbackCopy(REWARD.code, ok, no);
+    };
+    postHeight();
   }
   function pickFrom(e){
     var a = e.target.closest ? e.target.closest(".item[data-key]") : null;

@@ -87,6 +87,10 @@ Seat electives (`ELEC-T`, `ELEC-X`) need the visitor's own answers, so they don'
 
 Each line prints a value (hub guides $49–99, PDFs $39, decks $49, podcasts $29, the action plan $19, the Advisory Group seat $249, electives as tagged). The totals show the subtotal, coupon **PATHFINDER** for 100% off, and `TOTAL DUE $0.00`. Every line has a checkbox that ticks when opened and is remembered in the visitor's browser (`PICKED UP n / N`). On WordPress, the floating button turns into the visitor's path with progress and a Next-up link. See [customization.md](customization.md).
 
+## RSPA reward (optional)
+
+If enabled in the plugin, a real discount code unlocks after the visitor picks up their whole path (or N items, or immediately), printing as a tear-off coupon under the totals and in the floating button's panel. See [wordpress-plugin.md](wordpress-plugin.md#rspa-reward-discount-code).
+
 ## Shareable results
 
 **Copy link** shares a deep link like `…?r=201i` (level + track code: f/p/i/m); opening it shows that receipt immediately with a "take the quiz yourself" prompt (score shown as "— / 9" since it isn't the viewer's). **Share on LinkedIn** opens a pre-filled post naming the placement and pointing readers to the RSPA AI Resource Hub; **Email it** opens a drafted email doing the same. Both read from the `SHARE_TARGET` constant — currently the hub URL; point it at the quiz's own URL once hosted. A–D or 1–4 keys answer questions from the keyboard.

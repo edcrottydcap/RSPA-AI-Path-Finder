@@ -4,7 +4,7 @@ Tags: quiz, ai, education, block, shortcode
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,7 @@ Put it anywhere — by default the quiz opens in a popup, so it never has to fit
 * **Block** — search for "AI Path Finder" in the block inserter; choose card, button, or embedded quiz.
 * **Its own page** — the quiz is served at `/ai-path-finder/` the moment the plugin is activated (address configurable).
 * **Widget** — "RSPA AI Path Finder" under Appearance → Widgets for classic themes.
+* **RSPA reward** — optionally unlock a real discount code (membership, an event) as a tear-off coupon once a visitor has picked up their path.
 * **Template tag** — `rspa_ai_path_finder( array( 'display' => 'card' ) )` for custom page templates.
 
 Settings live under **Settings → AI Path Finder**, alongside copy-ready embed codes and a live preview.
@@ -62,6 +63,9 @@ No. The receipt's checkmarks (which resources a visitor has opened) are saved in
 The curriculum lives in the quiz file. A new plugin version is released from the GitHub repository when the RSPA AI Resource Hub changes; upload it over the old one (Plugins → Add New → Upload → Replace current with uploaded).
 
 == Changelog ==
+
+= 1.3.0 =
+* RSPA reward: an optional discount code that unlocks as a tear-off coupon on the receipt and in the floating button's panel, after the whole path, N items, or right away.
 
 = 1.2.0 =
 * Receipt lines get a checkbox that ticks when the visitor opens that resource, with a "picked up" count, remembered in the visitor's own browser.

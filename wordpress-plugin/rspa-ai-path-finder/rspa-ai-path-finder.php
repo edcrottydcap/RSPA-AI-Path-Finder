@@ -3,7 +3,7 @@
  * Plugin Name:       RSPA AI Path Finder
  * Plugin URI:        https://github.com/edcrottydcap/RSPA-AI-Path-Finder
  * Description:       The RSPA AI Path Finder quiz — six questions, one personalized AI curriculum printed as a receipt. Opens in a popup from a floating button, a card, or the [pathfinder] shortcode; also available as a block, a widget, and its own page.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.1
  * Requires PHP:      7.4
  * Author:            Ed Crotty, for the RSPA AI Resource Hub
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RSPA_APF_VERSION', '1.2.0' );
+define( 'RSPA_APF_VERSION', '1.3.0' );
 define( 'RSPA_APF_FILE', __FILE__ );
 define( 'RSPA_APF_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RSPA_APF_URL', plugin_dir_url( __FILE__ ) );
