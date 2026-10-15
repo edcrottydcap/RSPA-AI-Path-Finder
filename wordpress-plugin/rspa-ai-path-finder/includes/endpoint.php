@@ -120,6 +120,7 @@ function rspa_apf_serve() {
 		'shareTarget' => rspa_apf_share_target(),
 		'pingUrl'     => $preview ? '' : rspa_apf_setting( 'ping_url' ),
 		'resultBase'  => $result_base,
+		'coupon'      => rspa_apf_setting( 'coupon' ),
 	);
 
 	$html = rspa_apf_widget_html();

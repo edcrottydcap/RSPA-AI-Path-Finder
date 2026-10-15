@@ -307,7 +307,34 @@ function rspa_apf_launcher() {
 	}
 	wp_enqueue_style( 'rspa-ai-path-finder' );
 	wp_enqueue_script( 'rspa-ai-path-finder-embed' );
-	$text = rspa_apf_setting( 'launcher_text' );
-	$side = 'left' === rspa_apf_setting( 'launcher_position' ) ? 'left' : 'right';
-	echo '<div class="rspa-apf rspa-apf-launcher rspa-apf-launcher--' . esc_attr( $side ) . '">' . rspa_apf_button( $text ? $text : rspa_apf_card_defaults()['text'], 'popup' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in rspa_apf_button.
+	$text     = rspa_apf_setting( 'launcher_text' );
+	$position = rspa_apf_launcher_position();
+	$progress = rspa_apf_setting( 'launcher_progress' ) ? ' data-progress' : '';
+	echo '<div class="rspa-apf rspa-apf-launcher rspa-apf-launcher--' . esc_attr( $position ) . '"' . $progress . '>' . rspa_apf_button( $text ? $text : rspa_apf_card_defaults()['text'], 'popup' ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in rspa_apf_button.
+}
+
+/**
+ * Where the floating button sits. Accepts the 1.1 values 'left'/'right'.
+ *
+ * @return string One of rspa_apf_launcher_positions()' keys.
+ */
+function rspa_apf_launcher_position() {
+	$pos = rspa_apf_setting( 'launcher_position' );
+	$pos = array( 'right' => 'bottom-right', 'left' => 'bottom-left' )[ $pos ] ?? $pos;
+	return array_key_exists( $pos, rspa_apf_launcher_positions() ) ? $pos : 'bottom-right';
+}
+
+/**
+ * Floating button positions, value => label.
+ *
+ * @return array
+ */
+function rspa_apf_launcher_positions() {
+	return array(
+		'bottom-right'  => __( 'Bottom right', 'rspa-ai-path-finder' ),
+		'bottom-left'   => __( 'Bottom left', 'rspa-ai-path-finder' ),
+		'bottom-center' => __( 'Bottom center', 'rspa-ai-path-finder' ),
+		'top-right'     => __( 'Top right', 'rspa-ai-path-finder' ),
+		'top-left'      => __( 'Top left', 'rspa-ai-path-finder' ),
+	);
 }

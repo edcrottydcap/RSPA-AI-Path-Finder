@@ -32,12 +32,16 @@ The quiz ships as a WordPress plugin. It installs in about ten minutes with no c
 1. **Download** → [`rspa-ai-path-finder.zip`](https://github.com/edcrottydcap/RSPA-AI-Path-Finder/releases/latest/download/rspa-ai-path-finder.zip). That link always serves the latest release. Don't unzip it.
 2. **Install** → WordPress dashboard → **Plugins → Add Plugin → Upload Plugin** → choose the zip → **Install Now** → **Activate**.
 3. **Place it.** Pick one:
-   - **Easiest, no page editing:** **Settings → AI Path Finder** → tick **Show the floating button** → **Save**. A "Find your AI path" button appears on all seven AI Resource Hub pages (pre-filled).
+   - **Easiest, no page editing:** **Settings → AI Path Finder** → tick **Show the floating button** → **Save**. A "Find your AI path" button appears on all seven AI Resource Hub pages (pre-filled). After the quiz it turns into the visitor's progress tracker. You choose the corner: bottom right (default), bottom left, bottom center, top right, or top left.
    - **A card on the hub home page:** paste `[pathfinder display="card"]` into the page, or add the **AI Path Finder** block.
    - **Its own page:** it's already live at `yoursite.org/ai-path-finder/`. Link to it from menus, emails, or QR codes.
 4. **Check it** on a computer and a phone.
 
 <table>
+<tr>
+<td align="center" width="62%"><img src="docs/images/progress-panel.jpg" alt="The floating button opened into a progress panel: 1 of 7 picked up, Next up, and a checklist"><br><sub>After the quiz, the floating button tracks the visitor's path</sub></td>
+<td align="center" width="38%"><img src="docs/images/receipt-prices.jpg" alt="Receipt lines with checkboxes and prices" width="260"><br><sub>Every line has a value and a checkbox</sub></td>
+</tr>
 <tr>
 <td align="center" width="62%"><img src="docs/images/mock-hub-card.jpg" alt="Mockup: the AI Resource Hub home page with the Path Finder card"><br><sub>Mockup: the card on the AI Resource Hub home page, styled to match the hub</sub></td>
 <td align="center" width="38%"><img src="docs/images/mobile-popup-question.jpg" alt="The quiz in a full-screen popup on a phone" width="220"><br><sub>On phones the popup goes full screen</sub></td>
@@ -52,7 +56,9 @@ Not on WordPress, or can't install plugins? The quiz is one standalone HTML file
 
 Wondering where to start with AI — or what to read next? The AI Path Finder asks six quick questions about how you work and what you're after: your hands-on experience, a (painless) vocabulary check, the seat you sit in, your goal, your company's AI maturity, and what's holding you back. Then it rings you up and **prints your placement as a point-of-sale receipt**: a level, a persona, and a five-item reading path drawn from the RSPA AI Resource Hub — every line tappable, every link a real RSPA resource.
 
-There's no signup, nothing is collected or stored, and it takes about a minute. Your result comes with a shareable link, a pre-written LinkedIn post, and a drafted email — so a team lead can send it to the whole shop and compare receipts.
+Every line on the receipt has a checkbox and a price. Open a resource and its box ticks off ("PICKED UP 3 / 7"), and the subtotal shows what the whole reading list is worth before coupon **PATHFINDER** takes 100% off. On a WordPress site the floating button then becomes your path: progress, encouragement, and a **Next up** link, and visiting a page on your path ticks it off automatically.
+
+There's no signup, nothing is sent anywhere, and it takes about a minute. The checkmarks are remembered only in your own browser. Your result comes with a shareable link, a pre-written LinkedIn post, and a drafted email, so a team lead can send it to the whole shop and compare receipts.
 
 ## How the placement works
 

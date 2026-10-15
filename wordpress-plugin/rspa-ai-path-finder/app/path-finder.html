@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!-- Bump when the curriculum or behavior changes; the WordPress plugin's
      settings screen displays both values. -->
-<meta name="rspa-pathfinder-version" content="1.1.0">
+<meta name="rspa-pathfinder-version" content="1.2.0">
 <meta name="rspa-pathfinder-content-date" content="2026-10-13">
 <meta name="description" content="RSPA AI Path Finder — a 60-second placement quiz that prints your personalized AI curriculum from the RSPA AI Resource Hub.">
 
@@ -235,12 +235,23 @@
   .item:hover{background:rgba(0,102,204,.06)}
   .item:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
   .item .t{display:flex;justify-content:space-between;gap:10px;font-weight:700;font-size:13px}
-  .item .t .sku{flex:none;font-weight:400;color:var(--ink-soft);font-size:11px;letter-spacing:.06em}
+  .item .t .nm{flex:1;min-width:0}
+  .item .t .pr{flex:none;text-align:right;white-space:nowrap}
+  .item .t .sku{font-weight:400;color:var(--ink-soft);font-size:11px;letter-spacing:.06em;margin-right:6px}
+  /* checklist box: ticks when the visitor opens that line (saved in this browser only) */
+  .item .box{display:inline-block;position:relative;width:11px;height:11px;margin-right:7px;vertical-align:-1px;
+    border:1.5px solid currentColor;border-radius:2px;transition:background .15s,border-color .15s}
+  .item.got .box{background:var(--blue);border-color:var(--blue)}
+  .item.got .box::after{content:"";position:absolute;left:2.5px;top:-.5px;width:3px;height:6.5px;
+    border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .item .d{font-size:12px;color:var(--ink-soft);margin-top:2px;line-height:1.45}
   .item .u{font-size:11px;color:var(--blue);text-decoration:underline;text-underline-offset:2px;word-break:break-all;margin-top:3px;display:block}
   .totals .kv{margin:3px 0}
   .totals .kv b, .totals .grand span:last-child{white-space:nowrap}
   .totals .grand{font-size:15px;color:var(--ink);font-weight:700}
+  .totals .coupon{color:var(--red)}
+  .totals .coupon b{color:var(--red)}
   .barcode{
     height:44px;margin:14px auto 4px;max-width:280px;
     background:repeating-linear-gradient(90deg,
@@ -269,6 +280,8 @@
     color:var(--blue);margin-top:12px;min-height:16px;opacity:0;transition:opacity .25s;
   }
   .toast.show{opacity:1}
+  .picked-note{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--txt-soft);margin-top:6px}
+  .picked-note button{background:none;border:none;color:var(--blue);cursor:pointer;font:inherit;text-decoration:underline;text-underline-offset:2px;padding:0}
   .shared-note{
     font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--txt-soft);
     text-align:center;margin-bottom:14px;
@@ -357,6 +370,7 @@
         <button class="chip" id="retakeBtn">Retake</button>
       </div>
       <p class="toast" id="toast" role="status">LINK COPIED — PASTE IT ANYWHERE</p>
+      <p class="picked-note" id="pickedNote" hidden>Checkmarks are saved in this browser only · <button type="button" id="clearPicked">clear them</button></p>
     </section>
 
   </div>
@@ -386,6 +400,8 @@
   /* Base URL for "Copy my result link" (?r=201i is appended). Defaults to this
      page; the plugin points it at the WordPress page the quiz is embedded on. */
   var RESULT_BASE = CFG.resultBase || (location.origin + location.pathname);
+  /* Coupon printed on the receipt: every line's value comes off, total stays $0.00. */
+  var COUPON = String(CFG.coupon || "PATHFINDER").toUpperCase();
 
   /* inside an iframe: drop the gray page band so the widget sits on the host page */
   var EMBEDDED = window.parent !== window;
@@ -514,18 +530,29 @@
 
   /* electives appended by track / concern */
   var ELECTIVES = {
-    m:{sku:"ELEC-M", t:"Elective: Merchant-Facing AI", d:"A preview of the 301 track — real deployments across retail, restaurant & grocery.", u:HUB+"ai-merchant-facing-applications/"},
-    i:{sku:"ELEC-I", t:"Elective: Internal AI Applications", d:"A preview of the 201 track — efficiency use cases organized by business outcome.", u:HUB+"ai-internal-applications/"},
-    risk:{sku:"ELEC-S", t:"Elective: IP & Accuracy Guardrails", d:"The zero-trust defaults that let you use AI without losing sleep.", u:HUB+"ai-misconceptions-best-practices/"},
+    m:{sku:"ELEC-M", p:99, t:"Elective: Merchant-Facing AI", d:"A preview of the 301 track — real deployments across retail, restaurant & grocery.", u:HUB+"ai-merchant-facing-applications/"},
+    i:{sku:"ELEC-I", p:79, t:"Elective: Internal AI Applications", d:"A preview of the 201 track — efficiency use cases organized by business outcome.", u:HUB+"ai-internal-applications/"},
+    risk:{sku:"ELEC-S", p:59, t:"Elective: IP & Accuracy Guardrails", d:"The zero-trust defaults that let you use AI without losing sleep.", u:HUB+"ai-misconceptions-best-practices/"},
     /* 301 merchant track: the Inspire 2026 Voice AI deck (Google Drive .pptx, as linked from the hub) */
-    voice:{sku:"ELEC-V", t:"Elective: Voice AI in Retail IT (deck)", d:"Inspire 2026: phone, kiosk & drive-thru voice AI across retail, restaurant & grocery.", u:"https://drive.google.com/uc?export=download&id=167g3m_W9bVML_R7xXnJOEFtqOKq_wZOw"}
+    voice:{sku:"ELEC-V", p:49, t:"Elective: Voice AI in Retail IT (deck)", d:"Inspire 2026: phone, kiosk & drive-thru voice AI across retail, restaurant & grocery.", u:"https://drive.google.com/uc?export=download&id=167g3m_W9bVML_R7xXnJOEFtqOKq_wZOw"}
   };
 
   /* seat-specific electives (Q3), appended at every level */
   var ROLE_ELECTIVES = {
-    tech:{sku:"ELEC-T", t:"Elective: AI-Assisted Development", d:"RetailNOW 2026: from vibe coding to a disciplined dev loop — second-model review, PCI built in.", u:HUB+"wp-content/uploads/The-Latest-AI-Enablers-for-ISVs-FINAL.pdf"},
-    exec:{sku:"ELEC-X", t:"Elective: AI Considerations for VAR Leaders", d:"Inspire 2026 deck: a three-rule AI policy, a five-question use-case test, crawl-walk-run.", u:"https://drive.google.com/uc?export=download&id=1Q1Ds4-gEFKq4kEenIg5SFWdfA9tV9MkH"}
+    tech:{sku:"ELEC-T", p:39, t:"Elective: AI-Assisted Development", d:"RetailNOW 2026: from vibe coding to a disciplined dev loop — second-model review, PCI built in.", u:HUB+"wp-content/uploads/The-Latest-AI-Enablers-for-ISVs-FINAL.pdf"},
+    exec:{sku:"ELEC-X", p:49, t:"Elective: AI Considerations for VAR Leaders", d:"Inspire 2026 deck: a three-rule AI policy, a five-question use-case test, crawl-walk-run.", u:"https://drive.google.com/uc?export=download&id=1Q1Ds4-gEFKq4kEenIg5SFWdfA9tV9MkH"}
   };
+
+  /* "Value" printed on each receipt line, by SKU prefix (an item may set its own
+     with p:). Everything is free to RSPA members and visitors; the coupon line
+     takes it all off. */
+  var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, POD:29, PDF:39, DECK:49, OPS:79, MRCH:99, CTA:249};
+  function priceOf(it){
+    if(typeof it.p === "number") return it.p;
+    var pre = it.sku.split("-")[0];
+    return PRICE[pre] || 29;
+  }
+  function money(n){ return "$" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }
 
   var VFD_LINES = [
     "SCANNING FAMILIARITY…","CHECKING VOCABULARY…","LOGGING YOUR SEAT…",
@@ -677,7 +704,7 @@
     h += '<div class="r-sub">AI Resource Hub · Path Finder</div></div>';
     h += '<hr class="rule">';
     h += '<div class="kv"><span>DATE</span><b>'+dateStr+' '+timeStr+'</b></div>';
-    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.1</b></div>';
+    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.2</b></div>';
     h += '<div class="kv"><span>MEMBER SEAT</span><b>'+esc(ROLE_LABEL[role]||"—")+'</b></div>';
     h += '<div class="kv"><span>TRACK</span><b>'+esc(TRACK_LABEL[track]||"—")+'</b></div>';
     h += '<hr class="rule">';
@@ -687,10 +714,13 @@
     h += '<hr class="rule">';
     h += '<div class="r-h">Your curriculum — tap any line</div>';
 
-    items.concat(extra).forEach(function(it){
+    var lines = items.concat(extra), value = 0;
+    lines.forEach(function(it){
       var ext = it.u.indexOf("mailto:")===0 ? '' : ' target="_blank" rel="noopener"';
-      h += '<a class="item" href="'+esc(it.u)+'"'+ext+'>';
-      h += '<span class="t"><span>'+esc(it.t)+'</span><span class="sku">'+esc(it.sku)+'</span></span>';
+      var price = priceOf(it); value += price;
+      h += '<a class="item" data-key="'+esc(pickKey(it.u))+'" href="'+esc(it.u)+'"'+ext+'>';
+      h += '<span class="t"><span class="nm"><span class="box" aria-hidden="true"></span>'+esc(it.t)+'<span class="sr"> (picked up)</span></span>';
+      h += '<span class="pr"><span class="sku">'+esc(it.sku)+'</span>'+money(price)+'</span></span>';
       h += '<span class="d">'+esc(it.d)+'</span>';
       h += '<span class="u">'+esc(it.u.replace("https://www.","").replace("mailto:","").split("?")[0])+'</span>';
       h += '</a>';
@@ -698,7 +728,10 @@
 
     h += '<hr class="rule">';
     h += '<div class="totals">';
-    h += '<div class="kv"><span>SUBTOTAL · AI FAMILIARITY</span><b>'+(score===null?"—":score)+' / 9</b></div>';
+    h += '<div class="kv"><span>AI FAMILIARITY</span><b>'+(score===null?"—":score)+' / 9</b></div>';
+    h += '<div class="kv"><span>PICKED UP</span><b><span id="pickedCount">0</span> / '+lines.length+'</b></div>';
+    h += '<div class="kv"><span>SUBTOTAL · '+lines.length+' ITEMS</span><b>'+money(value)+'</b></div>';
+    h += '<div class="kv coupon"><span>COUPON '+esc(COUPON)+' · 100% OFF</span><b>−'+money(value)+'</b></div>';
     h += '<div class="kv"><span>FEAR OF AI</span><b>−100%</b></div>';
     h += '<div class="kv grand"><span>TOTAL DUE</span><span>$0.00</span></div>';
     h += '</div>';
@@ -708,6 +741,18 @@
     h += '<p class="thanks" style="margin-top:10px">*** Thank you for learning with RSPA ***<br>No refunds on knowledge</p></div>';
 
     $("receipt").innerHTML = h;
+    paintPicked();
+
+    /* Remember the visitor's own path (not a shared one) so the host site's
+       floating button can show progress and the next item (assets/embed.js
+       in the WordPress plugin reads the same key). */
+    if(!isShared){
+      try{
+        localStorage.setItem(PATH_KEY, JSON.stringify({v:1, level:level, grade:L.grade, persona:L.persona,
+          code:level+track, ts:Date.now(),
+          lines:lines.map(function(it){ return {t:it.t, u:it.u, sku:it.sku, k:pickKey(it.u)} })}));
+      }catch(e){}
+    }
 
     /* share links */
     var code = level + track;
@@ -753,6 +798,45 @@
     show("result");
     setTimeout(postHeight, reduced?50:1200);
   }
+
+  /* ————— picked-up checklist —————
+     Opening a receipt line ticks its box. Saved in this browser's localStorage
+     only (never sent anywhere); survives retakes and return visits. Storage can
+     be blocked (private mode, sandboxed frames): then boxes still tick for the
+     visit, they just aren't remembered. */
+  var PICK_KEY = "rspa-pathfinder-picked-up";
+  var PATH_KEY = "rspa-pathfinder-path";
+  var picked = (function(){ try{ return JSON.parse(localStorage.getItem(PICK_KEY) || "{}") || {} }catch(e){ return {} } })();
+  function pickKey(u){ return u.indexOf("mailto:")===0 ? u.split("?")[0] : u.split("#")[0] }
+  function savePicked(){ try{ localStorage.setItem(PICK_KEY, JSON.stringify(picked)) }catch(e){} }
+  function paintPicked(){
+    var els = $("receipt").querySelectorAll(".item[data-key]"), n = 0;
+    for(var i=0;i<els.length;i++){
+      var got = !!picked[els[i].getAttribute("data-key")];
+      els[i].classList.toggle("got", got);
+      if(got) n++;
+    }
+    var c = $("pickedCount"); if(c) c.textContent = n;
+    $("pickedNote").hidden = !Object.keys(picked).length;
+  }
+  function pickFrom(e){
+    var a = e.target.closest ? e.target.closest(".item[data-key]") : null;
+    if(!a) return;
+    picked[a.getAttribute("data-key")] = Date.now();
+    savePicked(); paintPicked();
+  }
+  $("receipt").addEventListener("click", pickFrom);
+  $("receipt").addEventListener("auxclick", function(e){ if(e.button===1) pickFrom(e) });
+  /* the host page's floating button can tick items too — stay in sync */
+  window.addEventListener("storage", function(e){
+    if(e.key !== PICK_KEY) return;
+    try{ picked = JSON.parse(e.newValue || "{}") || {} }catch(err){ picked = {} }
+    paintPicked();
+  });
+  $("clearPicked").addEventListener("click", function(){
+    picked = {}; try{ localStorage.removeItem(PICK_KEY) }catch(e){}
+    paintPicked();
+  });
 
   function fallbackCopy(text,done,fail){
     var ta=document.createElement("textarea");

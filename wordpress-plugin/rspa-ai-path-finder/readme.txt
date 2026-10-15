@@ -4,11 +4,11 @@ Tags: quiz, ai, education, block, shortcode
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Six quick questions, one personalized AI curriculum from the RSPA AI Resource Hub — printed as a shareable point-of-sale receipt.
+Six quick questions, one personalized AI curriculum from the RSPA AI Resource Hub — printed as a shareable point-of-sale receipt with a checklist that tracks what you've read.
 
 == Description ==
 
@@ -16,7 +16,7 @@ The AI Path Finder places visitors at AI 101, 102, 201, or 301 and prints a five
 
 Put it anywhere — by default the quiz opens in a popup, so it never has to fit your layout:
 
-* **Floating button** — tick one box in Settings → AI Path Finder and a "Find your AI path" button appears on the pages you list (pre-filled with the AI Resource Hub pages). No page editing; works with any template.
+* **Floating button** — tick one box in Settings → AI Path Finder and a "Find your AI path" button appears on the pages you list (pre-filled with the AI Resource Hub pages), in the corner you choose. No page editing; works with any template. After the quiz it becomes the visitor's progress tracker: "AI 201 path · 2 of 7", a Next-up link, the checklist, and encouragement. Visiting a page on the path ticks it off.
 * **Shortcode** — `[pathfinder display="card"]` (a promo card), `[pathfinder display="button"]`, or `[pathfinder]` (the whole quiz inline). Works in the classic editor, Elementor, Divi, WPBakery, and text widgets.
 * **Block** — search for "AI Path Finder" in the block inserter; choose card, button, or embedded quiz.
 * **Its own page** — the quiz is served at `/ai-path-finder/` the moment the plugin is activated (address configurable).
@@ -56,12 +56,16 @@ Clear the host's page cache (Flywheel, Kinsta, WP Engine, or a caching plugin) a
 A visitor's "Copy my result link" points back at the page the quiz is embedded on, with `?r=201i` appended. Anyone opening it sees that receipt and a prompt to take the quiz themselves.
 
 = Does it collect data? =
-No. Optionally, Settings → AI Path Finder → Response counter sends one anonymous `{level, track, role, ts}` POST per completed quiz to an endpoint you choose.
+No. The receipt's checkmarks (which resources a visitor has opened) are saved in that visitor's own browser storage and never sent anywhere. Optionally, Settings → AI Path Finder → Response counter sends one anonymous `{level, track, role, ts}` POST per completed quiz to an endpoint you choose.
 
 = How is the curriculum updated? =
 The curriculum lives in the quiz file. A new plugin version is released from the GitHub repository when the RSPA AI Resource Hub changes; upload it over the old one (Plugins → Add New → Upload → Replace current with uploaded).
 
 == Changelog ==
+
+= 1.2.0 =
+* Receipt lines get a checkbox that ticks when the visitor opens that resource, with a "picked up" count, remembered in the visitor's own browser.
+* Each line shows the resource's value; a coupon line (Settings → AI Path Finder → Coupon code, default PATHFINDER) takes 100% off.
 
 = 1.1.0 =
 * First release as a WordPress plugin: popup card/button, floating button, block, [pathfinder] shortcode, standalone page, classic widget, template tag, settings screen.

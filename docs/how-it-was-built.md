@@ -55,6 +55,10 @@ The plugin wraps the same `index.html` rather than re-implementing it. A rewrite
 - **Result links come home.** Share links point back at the embedding page (the `host` parameter, validated to the site's own domain with `wp_validate_redirect`), and a `?r=` code there reopens that receipt, auto-opening the popup if the page has only a button.
 - **Real phones, real theme.** Testing a copy of the live hub on an emulated iPhone showed the home page's header overflowing to ~825px, which stretches the layout viewport and pushes `position:fixed` elements off-screen. `embed.js` detects that and pins the floating button and popup to `visualViewport`.
 
+## Progress tracking (v1.2)
+
+The receipt was always a list of things to go get; v1.2 lets visitors check them off. The design constraints were the same as before: no backend, no accounts, no cookies. So progress lives in `localStorage`. The trick that makes the WordPress floating button aware of it is that the plugin serves the quiz from the *same site* as the hub pages: the quiz (in its iframe) and the host page share one storage area. The quiz writes the visitor's path and ticks; `embed.js` reads them, re-renders on the `storage` event when the popup changes something, and ticks off a hub page when the visitor lands on it. Prices are a receipt joke with a point: the subtotal makes the value of RSPA's free material visible, and the coupon line pays it off.
+
 ## QA
 
 **v1.1 (plugin).** Tested on WordPress 7.1 (wp-env, PHP 8.2): every PHP file linted; the quiz route with and without pretty permalinks; the `host` parameter rejecting off-site URLs; launcher page matching; shared-link pass-through and auto-open; Esc and backdrop close; iframe grow and shrink on Retake. Screenshots in `docs/images/` were captured by Playwright from saved copies of the live gorspa.org pages with the plugin injected, at 1280px desktop and iPhone 13 emulation; the quiz showed zero horizontal overflow on phones.

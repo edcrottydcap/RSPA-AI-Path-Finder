@@ -46,7 +46,8 @@ The plugin sets these through `window.RSPA_PATHFINDER_CONFIG`. A hand-hosted cop
   window.RSPA_PATHFINDER_CONFIG = {
     shareTarget: "https://www.example.org/ai-path-finder/", // LinkedIn/email shares
     pingUrl: "",                                         // optional response counter
-    resultBase: "https://www.example.org/ai-path-finder/"  // "Copy my result link" base
+    resultBase: "https://www.example.org/ai-path-finder/", // "Copy my result link" base
+    coupon: "PATHFINDER"                                    // coupon printed on the receipt
   };
 </script>
 ```
@@ -55,4 +56,4 @@ The plugin sets these through `window.RSPA_PATHFINDER_CONFIG`. A hand-hosted cop
 
 - The RSPA logo loads from `gorspa.org/wp-content/uploads/logo-color.svg`. If it can't load, a typographic `R·S·P·A` fallback appears instead of a broken image.
 - Fonts come from Google Fonts (Mulish and Spline Sans Mono); Proxima Nova is used first where the host page provides it.
-- The quiz stores nothing: no cookies, no localStorage, no tracking.
+- No cookies and no tracking. The receipt's checkmarks (which resources a visitor opened) are saved in that visitor's own `localStorage` and never sent anywhere.

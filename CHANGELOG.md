@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 — 2026-10-15
+
+- **Picked-up checklist.** Every receipt line has a checkbox that ticks when the visitor opens it, with a `PICKED UP n / N` total. Saved in the visitor's own browser (`localStorage`), never sent anywhere; a "clear them" link resets it.
+- **Receipt value and coupon.** Each line shows what the resource is worth; the totals show the subtotal, then coupon **PATHFINDER** for 100% off, then `TOTAL DUE $0.00`. New plugin setting: **Coupon code**.
+- **Floating button becomes a progress tracker** (plugin). After the quiz it shows "AI 201 path · 2 of 7" with a progress ring. Its panel has the checklist, a **Next up** link, encouragement, and links to the receipt or a retake. Visiting a page on the path ticks it off with a "✓ Picked up" note. New settings: **Progress tracker** (on/off) and **Position** (bottom right, bottom left, bottom center, top right, top left; 1.1's left/right values carry over).
+- Receipt reads "PATH FINDER v1.2".
+
 ## 1.1.0 — 2026-10-13
 
 ### WordPress plugin (new)

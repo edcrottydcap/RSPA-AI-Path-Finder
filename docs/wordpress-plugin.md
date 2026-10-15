@@ -45,7 +45,13 @@ Pick any one. They can be mixed, and none of them is permanent.
 /rspa-ai-education-content/
 ```
 
-Use one page address per line (full URLs work too), or `*` for every page. This option is printed from the site footer, so it works with **any** theme or page template.
+Use one page address per line (full URLs work too), or `*` for every page. This option is printed from the site footer, so it works with **any** theme or page template. **Position** puts it bottom right (default), bottom left, bottom center, top right, or top left.
+
+**It becomes a progress tracker.** Once a visitor has taken the quiz, the button turns into their path, e.g. "AI 201 path · 2 of 7" with a progress ring. Clicking it opens a panel with the checklist from their receipt, a **Next up** link to the first resource they haven't opened, and encouragement ("Nice start! 5 to go", "Halfway there", "One more…", "Path complete!"). Any page on their path that they visit, by any route, is ticked off with a brief "✓ Picked up" note. Turn this off with **Progress tracker** in the settings to keep a plain button.
+
+| The panel | Ticking off a page |
+|---|---|
+| <img src="images/progress-panel.jpg" alt="Progress panel" width="420"> | <img src="images/progress-picked-up.jpg" alt="Picked-up bubble above the button" width="420"> |
 
 | The setting | On the page (mockup) |
 |---|---|
@@ -100,8 +106,10 @@ Take the quiz once on a computer and once on a phone, from a private window.
 | Quiz address | The quiz's own page; shared result links and social cards point here | `ai-path-finder` |
 | Shares send people to | Target of the quiz's LinkedIn and email buttons | The quiz page |
 | Response counter | Optional endpoint (Formspree, Google Apps Script). Each finished quiz POSTs `{level, track, role, ts}`; nothing personal | Off |
+| Coupon code | Printed on every receipt: the resources' total value, then this code takes 100% off | `PATHFINDER` |
 | Social card image | 1200×630 image for LinkedIn/Teams/Facebook link previews | RSPA logo |
-| Floating button | On/off, which pages, wording, corner | Off · AI hub pages pre-filled |
+| Floating button | On/off, which pages, wording, position (5 choices) | Off · AI hub pages pre-filled · bottom right |
+| Progress tracker | After the quiz, the floating button shows the visitor's path and ticks off visited pages | On |
 
 The page also shows the widget version, the curriculum date, copy-ready shortcodes, and a live preview (preview runs are never counted).
 
@@ -157,7 +165,8 @@ flowchart LR
 - **Auto-sizing.** The quiz posts its height to the host page, so the iframe grows and shrinks with it. Several quizzes on one page are matched by the sending window.
 - **Result links come home.** "Copy my result link" points at the page the visitor was on (`?r=201i`). Opening it pops that receipt open, whether the page has an inline quiz, a card, a button, or only the floating button. The `host` parameter is validated against the site's own domain.
 - **Phone-safe.** On phones the popup goes full screen. If a theme's layout overflows the screen (the gorspa.org hub home page's header does), the floating button and popup pin themselves to the visible screen via `visualViewport`.
-- **Private by default.** No cookies, no storage, nothing sent anywhere unless you set a response counter.
+- **Progress stays on the visitor's device.** The receipt's checkmarks and the visitor's path live in the site's `localStorage` (keys `rspa-pathfinder-picked-up` and `rspa-pathfinder-path`). The quiz frame is served from the same site, so the host page's floating button reads the same keys. Nothing is sent anywhere, and there are no cookies. Receipt lines tick when opened; hub pages also tick when visited, if they're on the same site as the plugin.
+- **Private by default.** Nothing leaves the browser unless you set a response counter.
 
 Plugin files:
 
@@ -169,7 +178,7 @@ wordpress-plugin/rspa-ai-path-finder/
 ├── includes/settings.php       Settings → AI Path Finder
 ├── includes/widget.php         classic widget
 ├── blocks/path-finder/         block.json + editor script (plain JS, no build step)
-├── assets/embed.js|css         host-page popup, auto-height, phone fixes, hub-matched styles
+├── assets/embed.js|css         host-page popup, auto-height, progress tracker, phone fixes, hub-matched styles
 ├── app/path-finder.html        copy of index.html (generated, don't edit by hand)
 ├── readme.txt                  WordPress-format readme
 └── uninstall.php               removes settings on delete

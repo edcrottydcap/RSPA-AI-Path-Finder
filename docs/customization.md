@@ -10,6 +10,7 @@ var HUB = "https://www.gorspa.org/";
 var SHARE_TARGET = CFG.shareTarget || HUB + "ai-resource-hub/"; // where LinkedIn/email shares send people
 var PING_URL = CFG.pingUrl || "";                               // optional response counter endpoint
 var RESULT_BASE = CFG.resultBase || (location.origin + location.pathname); // base of "Copy my result link"
+var COUPON = String(CFG.coupon || "PATHFINDER").toUpperCase();              // coupon on the receipt
 ```
 
 **On WordPress, don't edit these.** Set them in **Settings → AI Path Finder** and the plugin injects `window.RSPA_PATHFINDER_CONFIG` ([wordpress-plugin.md](wordpress-plugin.md)). The defaults apply to the standalone file and GitHub Pages.
@@ -57,6 +58,20 @@ Electives are appended after the five items and deduped against them:
 To add a seat elective for `sales` or `ops`, add one entry to `ROLE_ELECTIVES`; no other code changes.
 
 **After any edit, run `node scripts/build-plugin.mjs`** so the WordPress plugin gets the same content, and bump the `rspa-pathfinder-version` / `rspa-pathfinder-content-date` meta tags at the top of `index.html`.
+
+## Prices and the coupon
+
+Each receipt line shows a "value". By default it comes from the SKU prefix via `PRICE`:
+
+```js
+var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, POD:29, PDF:39, DECK:49, OPS:79, MRCH:99, CTA:249};
+```
+
+Give any item its own value with `p:`, as the electives do (`{sku:"ELEC-M", p:99, …}`). The totals print `SUBTOTAL · N ITEMS`, then `COUPON <code> · 100% OFF` for the same amount, then `TOTAL DUE $0.00`. The coupon code comes from the plugin's **Coupon code** setting (or `CFG.coupon`).
+
+## The picked-up checklist
+
+Every receipt line has a checkbox that ticks when the visitor opens it, plus a `PICKED UP n / N` total. Ticks are saved in `localStorage` under `rspa-pathfinder-picked-up` (URL → timestamp), so they survive retakes and return visits, and a "clear them" link resets them. The visitor's own result is also saved under `rspa-pathfinder-path` (level, persona, and the receipt's lines), which the WordPress plugin's floating button reads to show progress. If storage is blocked, boxes still tick for the visit and nothing breaks. Shared links (`?r=`) never overwrite the viewer's own path.
 
 ## Look and feel
 

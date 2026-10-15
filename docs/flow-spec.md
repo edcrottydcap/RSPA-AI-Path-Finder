@@ -83,6 +83,10 @@ Seat electives (`ELEC-T`, `ELEC-X`) need the visitor's own answers, so they don'
 - New electives `ELEC-V`, `ELEC-T`, `ELEC-X`. The Voice AI deck that `DECK-301` used to point at now lands as `ELEC-V` for merchant-track 301s.
 - Every other hub item was reviewed and recorded, with the reason, in `REVIEWED` in `scripts/audit-content.mjs`.
 
+## Receipt value, coupon, and checklist
+
+Each line prints a value (hub guides $49–99, PDFs $39, decks $49, podcasts $29, the action plan $19, the Advisory Group seat $249, electives as tagged). The totals show the subtotal, coupon **PATHFINDER** for 100% off, and `TOTAL DUE $0.00`. Every line has a checkbox that ticks when opened and is remembered in the visitor's browser (`PICKED UP n / N`). On WordPress, the floating button turns into the visitor's path with progress and a Next-up link. See [customization.md](customization.md).
+
 ## Shareable results
 
 **Copy link** shares a deep link like `…?r=201i` (level + track code: f/p/i/m); opening it shows that receipt immediately with a "take the quiz yourself" prompt (score shown as "— / 9" since it isn't the viewer's). **Share on LinkedIn** opens a pre-filled post naming the placement and pointing readers to the RSPA AI Resource Hub; **Email it** opens a drafted email doing the same. Both read from the `SHARE_TARGET` constant — currently the hub URL; point it at the quiz's own URL once hosted. A–D or 1–4 keys answer questions from the keyboard.

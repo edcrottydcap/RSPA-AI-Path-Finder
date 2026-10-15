@@ -26,9 +26,11 @@ function rspa_apf_defaults() {
 		'share_custom' => '',
 		'ping_url'     => '',
 		'og_image'          => '',
+		'coupon'            => 'PATHFINDER',
 		'launcher'          => '',
 		'launcher_text'     => '',
-		'launcher_position' => 'right',
+		'launcher_position' => 'bottom-right',
+		'launcher_progress' => '1',
 		'launcher_pages'    => implode( "\n", rspa_apf_hub_paths() ),
 	);
 }
@@ -113,9 +115,12 @@ function rspa_apf_sanitize( $in ) {
 	foreach ( array( 'share_custom', 'ping_url', 'og_image' ) as $key ) {
 		$out[ $key ] = isset( $in[ $key ] ) ? esc_url_raw( trim( $in[ $key ] ), array( 'https', 'http' ) ) : '';
 	}
+	$coupon        = isset( $in['coupon'] ) ? strtoupper( preg_replace( '/[^A-Za-z0-9-]/', '', (string) $in['coupon'] ) ) : '';
+	$out['coupon'] = '' !== $coupon ? substr( $coupon, 0, 20 ) : 'PATHFINDER';
 	$out['launcher']          = empty( $in['launcher'] ) ? '' : '1';
 	$out['launcher_text']     = isset( $in['launcher_text'] ) ? sanitize_text_field( $in['launcher_text'] ) : '';
-	$out['launcher_position'] = ( isset( $in['launcher_position'] ) && 'left' === $in['launcher_position'] ) ? 'left' : 'right';
+	$out['launcher_position'] = ( isset( $in['launcher_position'] ) && array_key_exists( $in['launcher_position'], rspa_apf_launcher_positions() ) ) ? $in['launcher_position'] : 'bottom-right';
+	$out['launcher_progress'] = empty( $in['launcher_progress'] ) ? '' : '1';
 	if ( isset( $in['launcher_pages'] ) ) {
 		$lines                 = array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', (string) $in['launcher_pages'] ) ) );
 		$out['launcher_pages'] = implode( "\n", array_map( 'sanitize_text_field', $lines ) );
@@ -300,6 +305,13 @@ function rspa_apf_settings_page() {
 					</td>
 				</tr>
 				<tr>
+					<th scope="row"><label for="rspa-apf-coupon"><?php esc_html_e( 'Coupon code on the receipt', 'rspa-ai-path-finder' ); ?></label></th>
+					<td>
+						<input id="rspa-apf-coupon" type="text" class="regular-text" style="width:14em;text-transform:uppercase" maxlength="20" name="<?php echo esc_attr( $name ); ?>[coupon]" value="<?php echo esc_attr( $opts['coupon'] ); ?>">
+						<p class="description"><?php esc_html_e( 'Every receipt lists the value of its resources, then this code takes 100% off. Letters, numbers, and dashes.', 'rspa-ai-path-finder' ); ?></p>
+					</td>
+				</tr>
+				<tr>
 					<th scope="row"><label for="rspa-apf-og"><?php esc_html_e( 'Social card image (optional)', 'rspa-ai-path-finder' ); ?></label></th>
 					<td>
 						<input id="rspa-apf-og" type="url" class="regular-text" name="<?php echo esc_attr( $name ); ?>[og_image]" value="<?php echo esc_attr( $opts['og_image'] ); ?>" placeholder="https://www.gorspa.org/wp-content/uploads/…png">
@@ -326,10 +338,20 @@ function rspa_apf_settings_page() {
 					<td><input id="rspa-apf-ltext" type="text" class="regular-text" name="<?php echo esc_attr( $name ); ?>[launcher_text]" value="<?php echo esc_attr( $opts['launcher_text'] ); ?>" placeholder="<?php esc_attr_e( 'Find your AI path →', 'rspa-ai-path-finder' ); ?>"></td>
 				</tr>
 				<tr>
-					<th scope="row"><?php esc_html_e( 'Corner', 'rspa-ai-path-finder' ); ?></th>
+					<th scope="row"><label for="rspa-apf-lpos"><?php esc_html_e( 'Position', 'rspa-ai-path-finder' ); ?></label></th>
 					<td>
-						<label><input type="radio" name="<?php echo esc_attr( $name ); ?>[launcher_position]" value="right" <?php checked( $opts['launcher_position'], 'right' ); ?>> <?php esc_html_e( 'Bottom right', 'rspa-ai-path-finder' ); ?></label>
-						&nbsp; <label><input type="radio" name="<?php echo esc_attr( $name ); ?>[launcher_position]" value="left" <?php checked( $opts['launcher_position'], 'left' ); ?>> <?php esc_html_e( 'Bottom left', 'rspa-ai-path-finder' ); ?></label>
+						<select id="rspa-apf-lpos" name="<?php echo esc_attr( $name ); ?>[launcher_position]">
+							<?php foreach ( rspa_apf_launcher_positions() as $value => $label ) : ?>
+								<option value="<?php echo esc_attr( $value ); ?>" <?php selected( rspa_apf_launcher_position(), $value ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Progress tracker', 'rspa-ai-path-finder' ); ?></th>
+					<td>
+						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[launcher_progress]" value="1" <?php checked( $opts['launcher_progress'], '1' ); ?>> <?php esc_html_e( 'After the quiz, turn the button into the visitor\'s path', 'rspa-ai-path-finder' ); ?></label>
+						<p class="description"><?php esc_html_e( 'Shows "AI 201 path · 2 of 7", a Next-up link, the checklist, and encouragement. Visiting a page on the path ticks it off. Progress is kept in the visitor\'s own browser only.', 'rspa-ai-path-finder' ); ?></p>
 					</td>
 				</tr>
 			</table>
