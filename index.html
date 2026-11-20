@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!-- Bump when the curriculum or behavior changes; the WordPress plugin's
      settings screen displays both values. -->
-<meta name="rspa-pathfinder-version" content="1.3.0">
-<meta name="rspa-pathfinder-content-date" content="2026-10-13">
+<meta name="rspa-pathfinder-version" content="1.4.0">
+<meta name="rspa-pathfinder-content-date" content="2026-11-20">
 <meta name="description" content="RSPA AI Path Finder — a 60-second placement quiz that prints your personalized AI curriculum from the RSPA AI Resource Hub.">
 
 <!-- Open Graph / social cards. Once the quiz has its final public URL,
@@ -514,9 +514,11 @@
       items:[
         {sku:"TERM-101", t:"AI Terminology & Definitions", d:"Learn the language: generative vs. predictive, LLMs, RAG, agents — decoded for the channel.", u:HUB+"ai-terminology/"},
         {sku:"MYTH-101", t:"AI Misconceptions & Best Practices", d:"Seven myths, busted — plus what to never paste into a public AI tool.", u:HUB+"ai-misconceptions-best-practices/"},
-        {sku:"PRMPT-101", t:"Basic Prompting — the Cheat Sheet", d:"Sample prompts for marketing, sales & support, and the role-context-format formula.", u:HUB+"ai-tools/"},
-        {sku:"POD-151", t:"Podcast: AI's Impact w/ Byron Reese", d:"A tech futurist's big picture. Zero jargon, all signal.", u:HUB+"blog-rspa-trusted-advisor-ep-151-ais-impact-with-tech-futurist-byron-reese/"},
-        {sku:"ACT-101", t:"This week: one tool, one task", d:"The best-practices action plan — pick one AI tool and use it for one real task before Friday.", u:HUB+"ai-misconceptions-best-practices/"}
+        /* RSPA's own AI Roadmap 101 (hub: ai-roadmaps-for-solution-providers/). Module 1's 24 prompts
+           and 30-day plan replace the old PRMPT-101 cheat sheet and ACT-101 action item. */
+        {sku:"MAP-101A", t:"Roadmap 101 · Start Using AI with Confidence", d:"RSPA's beginner field manual: 24 copy-and-paste prompts for POS & payments work, and a 30-day practice plan.", u:HUB+"wp-content/uploads/AI-Roadmap-101-Module-1.pdf"},
+        {sku:"MAP-101B", t:"Roadmap 101 · Set Up Your AI Workspace", d:"Module 2: projects and files, privacy, a persona and writing style, the right tool, and a budget.", u:HUB+"wp-content/uploads/AI-Roadmap-101-Module-2.pdf"},
+        {sku:"POD-151", t:"Podcast: AI's Impact w/ Byron Reese", d:"A tech futurist's big picture. Zero jargon, all signal.", u:HUB+"blog-rspa-trusted-advisor-ep-151-ais-impact-with-tech-futurist-byron-reese/"}
       ]
     },
     "102":{
@@ -572,7 +574,7 @@
   /* "Value" printed on each receipt line, by SKU prefix (an item may set its own
      with p:). Everything is free to RSPA members and visitors; the coupon line
      takes it all off. */
-  var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, POD:29, PDF:39, DECK:49, OPS:79, MRCH:99, CTA:249};
+  var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, MAP:79, POD:29, PDF:39, DECK:49, OPS:79, MRCH:99, CTA:249};
   function priceOf(it){
     if(typeof it.p === "number") return it.p;
     var pre = it.sku.split("-")[0];
@@ -730,7 +732,7 @@
     h += '<div class="r-sub">AI Resource Hub · Path Finder</div></div>';
     h += '<hr class="rule">';
     h += '<div class="kv"><span>DATE</span><b>'+dateStr+' '+timeStr+'</b></div>';
-    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.3</b></div>';
+    h += '<div class="kv"><span>REGISTER</span><b>01 · PATH FINDER v1.4</b></div>';
     h += '<div class="kv"><span>MEMBER SEAT</span><b>'+esc(ROLE_LABEL[role]||"—")+'</b></div>';
     h += '<div class="kv"><span>TRACK</span><b>'+esc(TRACK_LABEL[track]||"—")+'</b></div>';
     h += '<hr class="rule">';

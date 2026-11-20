@@ -32,7 +32,7 @@ The quiz ships as a WordPress plugin. It installs in about ten minutes with no c
 1. **Download** → [`rspa-ai-path-finder.zip`](https://github.com/edcrottydcap/RSPA-AI-Path-Finder/releases/latest/download/rspa-ai-path-finder.zip). That link always serves the latest release. Don't unzip it.
 2. **Install** → WordPress dashboard → **Plugins → Add Plugin → Upload Plugin** → choose the zip → **Install Now** → **Activate**.
 3. **Place it.** Pick one:
-   - **Easiest, no page editing:** **Settings → AI Path Finder** → tick **Show the floating button** → **Save**. A "Find your AI path" button appears on all seven AI Resource Hub pages (pre-filled). After the quiz it turns into the visitor's progress tracker. You choose the corner: bottom right (default), bottom left, bottom center, top right, or top left.
+   - **Easiest, no page editing:** **Settings → AI Path Finder** → tick **Show the floating button** → **Save**. A "Find your AI path" button appears on all eight AI Resource Hub pages (pre-filled). After the quiz it turns into the visitor's progress tracker. You choose the corner: bottom right (default), bottom left, bottom center, top right, or top left.
    - **A card on the hub home page:** paste `[pathfinder display="card"]` into the page, or add the **AI Path Finder** block.
    - **Its own page:** it's already live at `yoursite.org/ai-path-finder/`. Link to it from menus, emails, or QR codes.
 4. **Check it** on a computer and a phone.

@@ -4,7 +4,7 @@ Tags: quiz, ai, education, block, shortcode
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,10 @@ No. The receipt's checkmarks (which resources a visitor has opened) are saved in
 The curriculum lives in the quiz file. A new plugin version is released from the GitHub repository when the RSPA AI Resource Hub changes; upload it over the old one (Plugins → Add New → Upload → Replace current with uploaded).
 
 == Changelog ==
+
+= 1.4.0 =
+* AI 101 receipt now carries RSPA's own AI Roadmap 101 (Module 1: Start Using AI with Confidence; Module 2: Set Up Your AI Workspace).
+* Floating button defaults include the hub's new AI Roadmaps page; an unedited seven-page list is upgraded automatically.
 
 = 1.3.0 =
 * RSPA reward: an optional discount code that unlocks as a tear-off coupon on the receipt and in the floating button's panel, after the whole path, N items, or right away.

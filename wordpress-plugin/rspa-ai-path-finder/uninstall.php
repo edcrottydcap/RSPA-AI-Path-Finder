@@ -9,3 +9,4 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 delete_option( 'rspa_apf_settings' );
 delete_option( 'rspa_apf_flush' );
+delete_option( 'rspa_apf_version' );

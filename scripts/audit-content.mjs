@@ -34,6 +34,7 @@ const HUB_PAGES = [
   "https://www.gorspa.org/ai-merchant-facing-applications/",
   "https://www.gorspa.org/ai-misconceptions-best-practices/",
   "https://www.gorspa.org/rspa-ai-education-content/",
+  "https://www.gorspa.org/ai-roadmaps-for-solution-providers/", // 201 and 301 roadmaps were "Coming Soon" on 2026-11-20
 ];
 
 // Hub links already reviewed and deliberately left off the receipt. They are
@@ -56,6 +57,7 @@ const REVIEWED = {
   "drive:1vgvrOulHu-EzfbqWjy2-m6LZ1G1m6TzD": "Inspire 2026 vendor demo (LeadEase)",
   "drive:1ZcHZzD7MndVt2KbG3JTzvwXcHGLy0QwK": "Inspire 2026 AI Predictive Analysis — candidate 301 elective",
   "drive:1OzGo-_5EegC9txhLgyKs2KRDtEspt5dc": "Inspire 2026 download-all zip",
+  "https://www.gorspa.org/ai-roadmaps-for-solution-providers/": "section page; its Roadmap 101 module PDFs are linked directly (MAP-101A/B)",
 };
 let reviewedSeen = 0;
 

@@ -33,7 +33,7 @@ Pick any one. They can be mixed, and none of them is permanent.
 
 ### A. Floating button: easiest, no page editing
 
-**Settings → AI Path Finder → Floating button**: tick **Show the floating button** and **Save Changes**. A "Find your AI path" button appears in the corner of the listed pages and opens the quiz in a popup. The list comes pre-filled with the seven AI Resource Hub pages:
+**Settings → AI Path Finder → Floating button**: tick **Show the floating button** and **Save Changes**. A "Find your AI path" button appears in the corner of the listed pages and opens the quiz in a popup. The list comes pre-filled with the eight AI Resource Hub pages:
 
 ```
 /ai-resource-hub/
@@ -43,7 +43,10 @@ Pick any one. They can be mixed, and none of them is permanent.
 /ai-merchant-facing-applications/
 /ai-misconceptions-best-practices/
 /rspa-ai-education-content/
+/ai-roadmaps-for-solution-providers/
 ```
+
+Upgrading from 1.3 or earlier: if your list was still the original seven pages, 1.4 adds the AI Roadmaps page for you the first time an administrator opens the dashboard. A list you edited is left alone, so add `/ai-roadmaps-for-solution-providers/` yourself if you want the button there.
 
 Use one page address per line (full URLs work too), or `*` for every page. This option is printed from the site footer, so it works with **any** theme or page template. **Position** puts it bottom right (default), bottom left, bottom center, top right, or top left.
 

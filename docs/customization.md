@@ -64,7 +64,7 @@ To add a seat elective for `sales` or `ops`, add one entry to `ROLE_ELECTIVES`; 
 Each receipt line shows a "value". By default it comes from the SKU prefix via `PRICE`:
 
 ```js
-var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, POD:29, PDF:39, DECK:49, OPS:79, MRCH:99, CTA:249};
+var PRICE = {TERM:49, MYTH:49, PRMPT:49, CRAFT:79, SEC:59, ACT:19, MAP:79, POD:29, PDF:39, DECK:49, OPS:79, MRCH:99, CTA:249};
 ```
 
 Give any item its own value with `p:`, as the electives do (`{sku:"ELEC-M", p:99, …}`). The totals print `SUBTOTAL · N ITEMS`, then `COUPON <code> · 100% OFF` for the same amount, then `TOTAL DUE $0.00`. The coupon code comes from the plugin's **Coupon code** setting (or `CFG.coupon`).

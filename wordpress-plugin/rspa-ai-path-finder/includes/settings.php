@@ -57,8 +57,34 @@ function rspa_apf_hub_paths() {
 		'/ai-merchant-facing-applications/',
 		'/ai-misconceptions-best-practices/',
 		'/rspa-ai-education-content/',
+		'/ai-roadmaps-for-solution-providers/',
 	);
 }
+
+/**
+ * One-time settings upgrades, run when the plugin version changes.
+ *
+ * 1.4.0: the hub gained an eighth page (AI Roadmaps). Sites whose floating-button
+ * list is still the original seven-page default get it added; edited lists are
+ * left alone.
+ */
+function rspa_apf_maybe_upgrade() {
+	$done = get_option( 'rspa_apf_version' );
+	if ( RSPA_APF_VERSION === $done ) {
+		return;
+	}
+	$opts = get_option( RSPA_APF_OPTION );
+	if ( is_array( $opts ) && isset( $opts['launcher_pages'] ) && ( ! $done || version_compare( $done, '1.4.0', '<' ) ) ) {
+		$lines    = array_values( array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', (string) $opts['launcher_pages'] ) ) ) );
+		$previous = array_slice( rspa_apf_hub_paths(), 0, 7 );
+		if ( $lines === $previous ) {
+			$opts['launcher_pages'] = implode( "\n", rspa_apf_hub_paths() );
+			update_option( RSPA_APF_OPTION, $opts );
+		}
+	}
+	update_option( 'rspa_apf_version', RSPA_APF_VERSION, false );
+}
+add_action( 'admin_init', 'rspa_apf_maybe_upgrade' );
 
 /**
  * Read one setting.
@@ -346,7 +372,7 @@ function rspa_apf_settings_page() {
 					<th scope="row"><label for="rspa-apf-lpages"><?php esc_html_e( 'Pages', 'rspa-ai-path-finder' ); ?></label></th>
 					<td>
 						<textarea id="rspa-apf-lpages" name="<?php echo esc_attr( $name ); ?>[launcher_pages]" rows="8" class="large-text code" style="max-width:520px"><?php echo esc_textarea( $opts['launcher_pages'] ); ?></textarea>
-						<p class="description"><?php esc_html_e( 'One page address per line, e.g. /ai-tools/ (full URLs work too). Use * for every page. Prefilled with the seven AI Resource Hub pages.', 'rspa-ai-path-finder' ); ?></p>
+						<p class="description"><?php esc_html_e( 'One page address per line, e.g. /ai-tools/ (full URLs work too). Use * for every page. Prefilled with the eight AI Resource Hub pages.', 'rspa-ai-path-finder' ); ?></p>
 					</td>
 				</tr>
 				<tr>

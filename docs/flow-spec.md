@@ -28,15 +28,15 @@ An interactive placement quiz for the [RSPA AI Resource Hub](https://www.gorspa.
 | 6–7 | **AI 201** | The Operator |
 | 8–9 | **AI 301** | The Trailblazer |
 
-## Curriculum per level (all links verified live — last refresh 2026-10-13)
+## Curriculum per level (all links verified live — last refresh 2026-11-20)
 
 **AI 101 — The Explorer** (build the foundation)
 
 1. `TERM-101` AI Terminology & Definitions — https://www.gorspa.org/ai-terminology/
 2. `MYTH-101` AI Misconceptions & Best Practices — https://www.gorspa.org/ai-misconceptions-best-practices/
-3. `PRMPT-101` Basic Prompting / Cheat Sheet — https://www.gorspa.org/ai-tools/
-4. `POD-151` Podcast ep. 151, Byron Reese — https://www.gorspa.org/blog-rspa-trusted-advisor-ep-151-ais-impact-with-tech-futurist-byron-reese/
-5. `ACT-101` Action item: one tool, one task this week — https://www.gorspa.org/ai-misconceptions-best-practices/
+3. `MAP-101A` RSPA AI Roadmap 101, Module 1: Start Using AI with Confidence (PDF) — https://www.gorspa.org/wp-content/uploads/AI-Roadmap-101-Module-1.pdf
+4. `MAP-101B` RSPA AI Roadmap 101, Module 2: Set Up Your AI Workspace (PDF) — https://www.gorspa.org/wp-content/uploads/AI-Roadmap-101-Module-2.pdf
+5. `POD-151` Podcast ep. 151, Byron Reese — https://www.gorspa.org/blog-rspa-trusted-advisor-ep-151-ais-impact-with-tech-futurist-byron-reese/
 
 **AI 102 — The Practitioner** (level up prompting)
 
@@ -75,6 +75,13 @@ An interactive placement quiz for the [RSPA AI Resource Hub](https://www.gorspa.
 
 Seat electives (`ELEC-T`, `ELEC-X`) need the visitor's own answers, so they don't appear on shared-link views (`?r=`), which carry only level and track.
 
+### What changed on 2026-11-20
+
+- The hub added an eighth section, **AI Roadmaps for Solution Providers** (`/ai-roadmaps-for-solution-providers/`), with RSPA's own 101 / 201 / 301 roadmaps. Roadmap 101 is published; 201 and 301 are marked "Coming Soon".
+- 101: `PRMPT-101` (the AI Tools cheat sheet) and `ACT-101` (the "one tool, one task" action item) → `MAP-101A` and `MAP-101B`, Roadmap 101's two modules. Module 1's 24 prompts and 30-day practice plan cover both, in RSPA's own beginner curriculum.
+- Not used: the roadmap page's two member-only videos (sign-in required) and its AI Tools Overview deck (already in `REVIEWED`).
+- The roadmap page is now crawled by the content audit, so the 201 and 301 modules will be reported as new when they appear.
+
 ### What changed on 2026-10-13
 
 - 102: `DECK-102` (link to the education section page) → `PDF-102`, the hub's 7-Day Social Content prompt — a hands-on prompting exercise.
@@ -85,7 +92,7 @@ Seat electives (`ELEC-T`, `ELEC-X`) need the visitor's own answers, so they don'
 
 ## Receipt value, coupon, and checklist
 
-Each line prints a value (hub guides $49–99, PDFs $39, decks $49, podcasts $29, the action plan $19, the Advisory Group seat $249, electives as tagged). The totals show the subtotal, coupon **PATHFINDER** for 100% off, and `TOTAL DUE $0.00`. Every line has a checkbox that ticks when opened and is remembered in the visitor's browser (`PICKED UP n / N`). On WordPress, the floating button turns into the visitor's path with progress and a Next-up link. See [customization.md](customization.md).
+Each line prints a value (hub guides $49–99, RSPA roadmap modules $79, PDFs $39, decks $49, podcasts $29, the action plan $19, the Advisory Group seat $249, electives as tagged). The totals show the subtotal, coupon **PATHFINDER** for 100% off, and `TOTAL DUE $0.00`. Every line has a checkbox that ticks when opened and is remembered in the visitor's browser (`PICKED UP n / N`). On WordPress, the floating button turns into the visitor's path with progress and a Next-up link. See [customization.md](customization.md).
 
 ## RSPA reward (optional)
 

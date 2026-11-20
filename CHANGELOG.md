@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.0 — 2026-11-20
+
+- **RSPA AI Roadmaps.** The hub's new eighth section, *AI Roadmaps for Solution Providers*, publishes RSPA's own 101 / 201 / 301 roadmaps. The AI 101 receipt now carries Roadmap 101's two modules:
+  - `MAP-101A` Module 1: Start Using AI with Confidence (PDF) — replaces `PRMPT-101`, the AI Tools cheat sheet.
+  - `MAP-101B` Module 2: Set Up Your AI Workspace (PDF) — replaces `ACT-101`, the "one tool, one task" action item.
+  - Roadmaps 201 and 301 are "Coming Soon" on the hub; the monthly content audit now crawls the roadmap page and will report them when they're published.
+- **Floating button** defaults now include `/ai-roadmaps-for-solution-providers/`. Sites still using the original seven-page list get it added automatically on upgrade; edited lists are left alone.
+- All 18 hub links re-verified. Receipt reads "PATH FINDER v1.4".
+
 ## 1.3.0 — 2026-10-15
 
 - **RSPA reward (discount code)**, off by default. Plugin settings: on/off, the code, a headline, fine print, a redeem link and button text, and when it unlocks: when the whole path is picked up (default), after N items, or right away.
