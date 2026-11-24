@@ -4,7 +4,7 @@ Tags: quiz, ai, education, block, shortcode
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,9 @@ No. The receipt's checkmarks (which resources a visitor has opened) are saved in
 The curriculum lives in the quiz file. A new plugin version is released from the GitHub repository when the RSPA AI Resource Hub changes; upload it over the old one (Plugins → Add New → Upload → Replace current with uploaded).
 
 == Changelog ==
+
+= 1.5.0 =
+* Matches the gorspa.org hub: back-to-hub bar on the quiz's own page, the hub card icon on the intro, theme title colour and button style.
 
 = 1.4.1 =
 * Browser-tab icon and share image use RSPA's Find Your AI Learning Path icon.

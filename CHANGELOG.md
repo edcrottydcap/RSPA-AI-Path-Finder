@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 — 2026-11-24
+
+Looks more like part of gorspa.org, matched to the live hub's theme:
+
+- **"← Back to the AI Resource Hub" bar** at the top, in the hub's section-bar blue (`#1e73be`). Hidden when the quiz is inside a popup or iframe, where the visitor is already on the hub.
+- **Intro** shows the *Find Your AI Learning Path* icon from the hub card beside the headline; headlines use the hub's card-title blue (`#005dac`); white page ground instead of the gray band.
+- **Buttons** follow the theme's `.btn-link.blue`: uppercase, square, `#275ca7`.
+- The receipt itself is unchanged. Receipt reads "PATH FINDER v1.5".
+
 ## 1.4.1 — 2026-11-24
 
 - Browser-tab icon and social share image now use RSPA's *Find Your AI Learning Path* icon from the hub card (`Find-AI-Path-Icon-800w.png`). The share image was the SVG logo, which LinkedIn doesn't display.
