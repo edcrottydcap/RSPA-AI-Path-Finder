@@ -98,6 +98,8 @@
 	function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 	function bareHost(h) { return h.replace(/^www\./, ''); }
 	function url(u) { try { return new URL(u, location.href); } catch (e) { return null; } }
+	/* Links rebuilt from saved progress: only web and email addresses, never javascript: or data: */
+	function safeHref(u) { var a = url(u); return a && /^(https?|mailto):$/.test(a.protocol) ? a.href : '#'; }
 
 	/* Is this item the page being viewed right now? (same site, same path) */
 	function isHere(u) {
@@ -178,18 +180,18 @@
 			h += '<p class="rspa-apf-reward__t">' + esc(reward.headline || 'Your RSPA discount') + '</p>';
 			h += '<p class="rspa-apf-reward__code"><b>' + esc(reward.code) + '</b><button type="button" data-apf="copy">Copy</button></p>';
 			if (reward.details) h += '<p class="rspa-apf-reward__d">' + esc(reward.details) + '</p>';
-			if (reward.url) h += '<a class="rspa-apf-reward__cta" href="' + esc(reward.url) + '" target="_blank" rel="noopener">' + esc(reward.cta || 'Redeem now') + ' →</a>';
+			if (reward.url) h += '<a class="rspa-apf-reward__cta" href="' + esc(safeHref(reward.url)) + '" target="_blank" rel="noopener">' + esc(reward.cta || 'Redeem now') + ' →</a>';
 			h += '</div>';
 		}
 		if (p.next) {
-			h += '<a class="rspa-apf-button rspa-apf-next" data-k="' + esc(p.next.k) + '" href="' + esc(p.next.u) + '"' + (opensHere(p.next.u) ? '' : ' target="_blank" rel="noopener"') + '>Next up: ' + esc(p.next.t) + ' →</a>';
+			h += '<a class="rspa-apf-button rspa-apf-next" data-k="' + esc(p.next.k) + '" href="' + esc(safeHref(p.next.u)) + '"' + (opensHere(p.next.u) ? '' : ' target="_blank" rel="noopener"') + '>Next up: ' + esc(p.next.t) + ' →</a>';
 		} else {
 			h += '<a class="rspa-apf-button rspa-apf-next" href="' + esc(quizSrc()) + '" data-rspa-apf-open="' + esc(quizSrc()) + '">Retake the quiz →</a>';
 		}
 		h += '<ol class="rspa-apf-list">';
 		p.path.lines.forEach(function (l) {
 			var got = !!p.picked[l.k];
-			h += '<li' + (got ? ' class="got"' : '') + '><a data-k="' + esc(l.k) + '" href="' + esc(l.u) + '"' + (opensHere(l.u) ? '' : ' target="_blank" rel="noopener"') + '>';
+			h += '<li' + (got ? ' class="got"' : '') + '><a data-k="' + esc(l.k) + '" href="' + esc(safeHref(l.u)) + '"' + (opensHere(l.u) ? '' : ' target="_blank" rel="noopener"') + '>';
 			h += '<span class="rspa-apf-box" aria-hidden="true"></span><span>' + esc(l.t) + (got ? '<span class="rspa-apf-sr"> (picked up)</span>' : '') + '</span></a></li>';
 		});
 		h += '</ol>';

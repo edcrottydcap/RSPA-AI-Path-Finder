@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.1 — 2026-11-24
+
+- **Hardening:** links built from settings or saved progress (receipt lines, the reward button, the floating button's path) now accept only web and email addresses, never `javascript:` or `data:` URLs.
+- **Repository:** added `LICENSE` (GPL-2.0-or-later, as the plugin already declared) and `SECURITY.md`. The release workflow is read-only by default; only the release job, which runs on version tags, can write.
+- README and docs describe how RSPA uses it today: the hosted copy, linked from the hub.
+
 ## 1.5.0 — 2026-11-24
 
 Looks more like part of gorspa.org, matched to the live hub's theme:

@@ -8,7 +8,9 @@
 
 A free tool for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hub/), built for VARs, ISVs, vendors, and distributors.
 
-[![Take the quiz](https://img.shields.io/badge/▶_Take_the_quiz-live_demo-2860B3?style=for-the-badge)](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)
+**Live on the hub:** look for *Find Your AI Learning Path* at the bottom of [gorspa.org/ai-resource-hub](https://www.gorspa.org/ai-resource-hub/).
+
+[![Take the quiz](https://img.shields.io/badge/▶_Take_the_quiz-live-2860B3?style=for-the-badge)](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)
 
 [![Download the WordPress plugin](https://img.shields.io/badge/⬇_WordPress_plugin-download_.zip-1F4A89?style=for-the-badge)](https://github.com/edcrottydcap/RSPA-AI-Path-Finder/releases/latest/download/rspa-ai-path-finder.zip)
 
@@ -18,16 +20,24 @@ A free tool for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hu
 
 <table>
 <tr>
-<td align="center" width="50%"><img src="assets/quiz-intro.png" alt="The quiz start screen, styled like an RSPA register"><br><sub>Answer six questions — by mouse, touch, or the A–D keys</sub></td>
+<td align="center" width="50%"><img src="assets/quiz-intro.png" alt="The quiz start screen, styled like the RSPA AI Resource Hub"><br><sub>Answer six questions — by mouse, touch, or the A–D keys</sub></td>
 <td align="center" width="50%"><img src="assets/receipt.png" alt="A printed placement receipt showing AI 102 · The Practitioner with a personalized curriculum"><br><sub>…and your curriculum prints as a receipt you can share</sub></td>
 </tr>
 </table>
 
 </div>
 
-## Put it on your WordPress site (RSPA: start here)
+## How it's hosted
 
-The quiz ships as a WordPress plugin. It installs in about ten minutes with no coding, and opens in a **popup** from a button, so it never has to fit into an existing page layout.
+**Today:** RSPA links to the copy this repo publishes on GitHub Pages, so there's nothing to install on gorspa.org during its site redesign. Every push to `main` goes live within about a minute, and the hub's link always shows the current curriculum.
+
+**Any other website** can link to the same address, or embed it inline with one Custom HTML block: see [docs/wordpress-embed.md](docs/wordpress-embed.md).
+
+**Later, on RSPA's own WordPress site:** the plugin below adds a popup, a floating progress tracker, and an optional reward code.
+
+## Put it on a WordPress site (the plugin)
+
+The quiz also ships as a WordPress plugin. It installs in about ten minutes with no coding, and opens in a **popup** from a button, so it never has to fit into an existing page layout.
 
 1. **Download** → [`rspa-ai-path-finder.zip`](https://github.com/edcrottydcap/RSPA-AI-Path-Finder/releases/latest/download/rspa-ai-path-finder.zip). That link always serves the latest release. Don't unzip it.
 2. **Install** → WordPress dashboard → **Plugins → Add Plugin → Upload Plugin** → choose the zip → **Install Now** → **Activate**.
@@ -80,7 +90,7 @@ flowchart LR
 
 | Placement | Who lands here | Your receipt focuses on |
 |---|---|---|
-| **AI 101 · The Explorer** | Starting fresh — and in the best spot to build it right | Terminology, myth-busting, first prompts, one action for this week |
+| **AI 101 · The Explorer** | Starting fresh — and in the best spot to build it right | Terminology, myth-busting, and RSPA's own AI Roadmap 101 (two modules) |
 | **AI 102 · The Practitioner** | Already using AI, ready for better results | Advanced prompting (C.R.A.F.T., personas), protecting your IP |
 | **AI 201 · The Operator** | Putting AI to work across the business | Team-by-team internal use cases, governance, the reseller playbook |
 | **AI 301 · The Trailblazer** | Bringing AI to merchants and products | Merchant-facing AI by vertical, AI & payments, the AI Advisory Group |
@@ -89,9 +99,9 @@ The complete decision flow — every question, option, point value, and elective
 
 ## Try it
 
-**[▶ Take the quiz](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)**: live from this repo via GitHub Pages, and updated automatically whenever `main` changes. Or download [`index.html`](index.html) (the entire tool is that one file) and open it in any browser.
+**[▶ Take the quiz](https://edcrottydcap.github.io/RSPA-AI-Path-Finder/)**: the same live copy RSPA links to, published from this repo by GitHub Pages and updated automatically whenever `main` changes. Or download [`index.html`](index.html) (the entire tool is that one file) and open it in any browser.
 
-The curriculum was last refreshed against the live hub on **October 13, 2026** (RetailNOW 2026 and Inspire 2026 material). See [CHANGELOG.md](CHANGELOG.md).
+The curriculum was last refreshed against the live hub on **November 20, 2026**, adding RSPA's AI Roadmap 101. A content audit runs on the first of every month and opens an issue when the hub changes. See [CHANGELOG.md](CHANGELOG.md).
 
 Got a placement you disagree with, a resource that belongs on a receipt, or an idea for a new track? [Open an issue](../../issues) — or email the RSPA at **Membership@GoRSPA.org** to get involved with the AI Resource Hub itself.
 
@@ -121,5 +131,6 @@ The widget is a single self-contained HTML file: no framework, no build step, no
 
 <div align="center">
 <sub>Maintained by <a href="https://github.com/edcrottydcap">Ed Crotty</a> · Contributions by issue — the repo is read-only for everyone else for now.<br>
+Code under <a href="LICENSE">GPL-2.0-or-later</a>. The RSPA name, logo, and icons belong to the Retail Solutions Providers Association. Security: <a href="SECURITY.md">SECURITY.md</a>.<br>
 <b>*** THANK YOU FOR LEARNING WITH RSPA · NO REFUNDS ON KNOWLEDGE ***</b></sub>
 </div>

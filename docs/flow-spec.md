@@ -2,7 +2,7 @@
 
 An interactive placement quiz for the [RSPA AI Resource Hub](https://www.gorspa.org/ai-resource-hub/). Six questions place a visitor on an **AI 101 / 102 / 201 / 301** track and print a personalized, shareable "curriculum receipt" with live links to RSPA content. Styled to RSPA's site (Proxima Nova–first font stack, RSPA navy `#1F4A89`, nav blue `#2860B3`, action blue `#0066CC`, RSPA red `#C02B0A` for the stamp, official logo from `gorspa.org/wp-content/uploads/logo-color.svg`).
 
-**Why a custom widget instead of Typeform:** zero cost, no response caps, full branching control, a rich multi-link results page (Typeform endings can't do itemized link lists well), and it embeds on WordPress with one iframe. Typeform remains a fine alternative if you want hosted response analytics — this doc's question/scoring spec can be rebuilt there 1:1 via your Typeform MCP connector.
+**Why a custom widget instead of a form builder:** zero cost, no response caps, full branching control, a rich multi-link results page (form-builder endings can't do itemized link lists well), and it embeds anywhere with one iframe. If hosted response analytics are ever needed, this doc's question and scoring spec can be rebuilt in a tool like Typeform one-to-one.
 
 ---
 

@@ -16,7 +16,7 @@ Rather than guessing at brand values, the palette was measured directly from the
 | Nav blue | `#2860B3` | Main-menu bar background |
 | Action blue | `#0066CC` | Links and buttons |
 | Red | `#C02B0A` | Accent — used here only for the persona stamp |
-| Gray band | `#F1F1F1` / `#D8D8D8` | Section backgrounds and borders |
+| Borders | `#D8D8D8` | Section borders (the page ground is white since v1.5) |
 | Text | `#333333` | Body copy |
 
 Typography follows the site as well: the stack leads with **Proxima Nova** (RSPA's own face — it resolves automatically when the widget runs on gorspa.org), falling back to **Mulish** from Google Fonts, then Helvetica/Arial. **Spline Sans Mono** carries the register voice: the status display, receipt body, SKU codes, and micro-labels. Buttons are flat and squared, matching the site's controls. The official logo loads from `gorspa.org/wp-content/uploads/logo-color.svg`, with a typographic `R·S·P·A` fallback when the image can't load (offline preview, blocked domains).
@@ -59,7 +59,13 @@ The plugin wraps the same `index.html` rather than re-implementing it. A rewrite
 
 The receipt was always a list of things to go get; v1.2 lets visitors check them off. The design constraints were the same as before: no backend, no accounts, no cookies. So progress lives in `localStorage`. The trick that makes the WordPress floating button aware of it is that the plugin serves the quiz from the *same site* as the hub pages: the quiz (in its iframe) and the host page share one storage area. The quiz writes the visitor's path and ticks; `embed.js` reads them, re-renders on the `storage` event when the popup changes something, and ticks off a hub page when the visitor lands on it. Prices are a receipt joke with a point: the subtotal makes the value of RSPA's free material visible, and the coupon line pays it off.
 
+## Matching the hub page (v1.5)
+
+Once RSPA linked to the hosted copy from a card on the AI Resource Hub, visitors arrived on a page that didn't look like part of gorspa.org. v1.5 borrows the hub's own parts, again measured from the live theme: a *Back to the AI Resource Hub* bar in the section-bar blue (`#1e73be`), the hub card's *Find Your AI Learning Path* icon beside the headline, headlines in the `.hub-title` blue (`#005dac`), white ground, and buttons styled like the theme's `.btn-link.blue`. The bar hides itself inside a popup or iframe, where the visitor is already on the hub. The receipt didn't change.
+
 ## QA
+
+**v1.5 (hub look).** Playwright with the installed Chrome: the full quiz at 1280px desktop and 390px phone, the embedded iframe (bar hidden, frame resizing from 525px to 1681px), and a shared `?r=` link; no JavaScript errors and no horizontal overflow; every screenshot reviewed.
 
 **v1.1 (plugin).** Tested on WordPress 7.1 (wp-env, PHP 8.2): every PHP file linted; the quiz route with and without pretty permalinks; the `host` parameter rejecting off-site URLs; launcher page matching; shared-link pass-through and auto-open; Esc and backdrop close; iframe grow and shrink on Retake. Screenshots in `docs/images/` were captured by Playwright from saved copies of the live gorspa.org pages with the plugin injected, at 1280px desktop and iPhone 13 emulation; the quiz showed zero horizontal overflow on phones.
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <!-- Bump when the curriculum or behavior changes; the WordPress plugin's
      settings screen displays both values. -->
-<meta name="rspa-pathfinder-version" content="1.5.0">
+<meta name="rspa-pathfinder-version" content="1.5.1">
 <meta name="rspa-pathfinder-content-date" content="2026-11-20">
 <meta name="description" content="RSPA AI Path Finder — a 60-second placement quiz that prints your personalized AI curriculum from the RSPA AI Resource Hub.">
 
@@ -733,6 +733,8 @@
 
   /* ————— receipt ————— */
   function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+  /* links: only web and email addresses, never javascript: or data: */
+  function safeHref(u){ try{ var a = new URL(u, location.href); return /^(https?|mailto):$/.test(a.protocol) ? a.href : "#" }catch(e){ return "#" } }
 
   function renderResult(level, track, role, score, flag, isShared){
     var L = LEVELS[level];
@@ -778,7 +780,7 @@
     lines.forEach(function(it){
       var ext = it.u.indexOf("mailto:")===0 ? '' : ' target="_blank" rel="noopener"';
       var price = priceOf(it); value += price;
-      h += '<a class="item" data-key="'+esc(pickKey(it))+'" href="'+esc(it.u)+'"'+ext+'>';
+      h += '<a class="item" data-key="'+esc(pickKey(it))+'" href="'+esc(safeHref(it.u))+'"'+ext+'>';
       h += '<span class="t"><span class="nm"><span class="box" aria-hidden="true"></span>'+esc(it.t)+'<span class="sr"> (picked up)</span></span>';
       h += '<span class="pr"><span class="sku">'+esc(it.sku)+'</span>'+money(price)+'</span></span>';
       h += '<span class="d">'+esc(it.d)+'</span>';
@@ -894,7 +896,7 @@
       r += '<div class="rw-t">'+esc(REWARD.headline || "Your RSPA discount")+'</div>';
       r += '<div class="rw-code"><b>'+esc(REWARD.code)+'</b><button type="button" id="rwCopy">COPY</button></div>';
       if(REWARD.details) r += '<div class="rw-d">'+esc(REWARD.details)+'</div>';
-      if(REWARD.url) r += '<a class="rw-cta" href="'+esc(REWARD.url)+'" target="_blank" rel="noopener">'+esc(REWARD.cta || "Redeem now")+' →</a>';
+      if(REWARD.url) r += '<a class="rw-cta" href="'+esc(safeHref(REWARD.url))+'" target="_blank" rel="noopener">'+esc(REWARD.cta || "Redeem now")+' →</a>';
     } else {
       r += '<div class="rw-h">RSPA reward · locked</div>';
       r += '<div class="rw-t">'+esc(REWARD.headline || "Your RSPA discount")+'</div>';
