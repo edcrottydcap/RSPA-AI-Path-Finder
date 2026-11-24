@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1 — 2026-11-24
+
+- Browser-tab icon and social share image now use RSPA's *Find Your AI Learning Path* icon from the hub card (`Find-AI-Path-Icon-800w.png`). The share image was the SVG logo, which LinkedIn doesn't display.
+
 ## 1.4.0 — 2026-11-20
 
 - **RSPA AI Roadmaps.** The hub's new eighth section, *AI Roadmaps for Solution Providers*, publishes RSPA's own 101 / 201 / 301 roadmaps. The AI 101 receipt now carries Roadmap 101's two modules:
